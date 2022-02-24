@@ -1,3 +1,9 @@
+using Pkg
+
+Pkg.add("LightGraphs")
+Pkg.add(name = "GraphIO", version = "0.5.0")
+Pkg.add("PrettyTables")
+
 using LightGraphs, GraphIO, Printf, PrettyTables
 
 function GetFileName(filename)
