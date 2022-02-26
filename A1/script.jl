@@ -3,9 +3,13 @@ using Pkg
 Pkg.add("LightGraphs")
 Pkg.add(name = "GraphIO", version = "0.5.0")
 Pkg.add("PrettyTables")
+Pkg.add("CSV")
+Pkg.add("DataFrames")
 
 using LightGraphs, GraphIO, Printf, PrettyTables
 using Statistics
+using CSV
+using DataFrames
 include("utils.jl")
 
 function get_file_name(filename)
@@ -30,6 +34,4 @@ open("results/networks_descriptors_latex.txt", "w") do f
     pretty_table(f, table; backend = Val(:latex), header = header)
 end
 
-open("results/networks_descriptors.txt", "w") do f
-    pretty_table(f, table; header = header)
-end
+CSV.write("results/networks_descriptors.csv", DataFrame(table, :auto), header = header, delimiter) 
