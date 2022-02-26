@@ -25,4 +25,11 @@ for (root, dirs, files) in walkdir("A1-networks")
     end
 end
 
-pretty_table(table; backend = Val(:latex), header = header)
+
+open("results/networks_descriptors_latex.txt", "w") do f
+    pretty_table(f, table; backend = Val(:latex), header = header)
+end
+
+open("results/networks_descriptors.txt", "w") do f
+    pretty_table(f, table; header = header)
+end
