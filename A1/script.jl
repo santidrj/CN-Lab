@@ -27,7 +27,8 @@ for (root, dirs, files) in walkdir("A1-networks")
         g = loadgraph(joinpath(root, file), NETFormat())
         f(x) = gdistances(g, x)
         path_lengths = reduce(hcat, f.(vertices(g)))
-        row = [get_file_name(file) nv(g) ne(g) Δ(g) δ(g) (ne(g) / nv(g)) mean(local_clustering_coefficient(g)) assortativity(g) mean(path_lengths) maximum(path_lengths)]
+        row = [get_file_name(file) nv(g) ne(g) Δ(g) δ(g) round((ne(g) / nv(g)), digits=4) round(mean(local_clustering_coefficient(g)), digits=4) round(assortativity(g), digits=4) round(mean(path_lengths), digits=4) maximum(path_lengths)]
+
         if first
             global table = row
             global first = false
