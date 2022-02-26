@@ -2,7 +2,6 @@
   \begin{tabular}{rrrrrrrrrr}
     \hline\hline
     \textbf{Network} & \textbf{#nodes} & \textbf{#edges} & \textbf{Max degree} & \textbf{Min degree} & \textbf{Avg. degree} & \textbf{Avg. cluster coefficient} & \textbf{Assortativity} & \textbf{Avg. path length} & \textbf{Diameter} \\\hline
-    0.0 & 1.31818e-315 & 1.31775e-315 & 0.0 & 1.31818e-315 & 1.31775e-315 & 0.0 & 1.31818e-315 & 1.31775e-315 & 0.0 \\
     256_4_4_2_15_18_p & 256 & 2274 & 23 & 15 & 8.88281 & 0.733061 & 0.0286239 & 2.77124 & 5 \\
     256_4_4_4_13_18_p & 256 & 2299 & 25 & 10 & 8.98047 & 0.5113 & 0.000695402 & 2.64075 & 4 \\
     BA1000 & 1000 & 3990 & 115 & 4 & 3.99 & 0.0354488 & -0.0542074 & 3.1801 & 5 \\
