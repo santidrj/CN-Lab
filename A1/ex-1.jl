@@ -14,9 +14,6 @@ using CSV
 using DataFrames
 include("utils.jl")
 
-function get_file_name(filename)
-    return filename[begin:findlast(isequal('.'), filename)-1]
-end
 
 header = (["Network", "#nodes", "#edges", "Max degree", "Min degree", "Avg. degree", "Avg. cluster coefficient", "Assortativity", "Avg. path length", "Diameter"])
 table = []

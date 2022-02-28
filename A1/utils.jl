@@ -57,3 +57,7 @@ http://arxiv.org/abs/cond-mat/0205405/
 @traitfn function assortativity_coefficient(g::::(!IsDirected), sjk, sj, sk, sjs, sks, nue)
 return (sjk/nue - ((sj + sk)/(2*nue))^2) / ((sjs + sks)/(2*nue) - ((sj + sk)/(2*nue))^2)
 end
+
+function get_file_name(filename)
+    return filename[begin:findlast(isequal('.'), filename)-1]
+end
