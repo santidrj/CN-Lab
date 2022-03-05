@@ -2,7 +2,7 @@ library(igraph)
 library(dplyr)
 library(xtable)
 
-list.files("A1-networks", recursive = TRUE)
+list.files(file.path("..", "A1-networks"), recursive = TRUE)
 
 header <- c(
   "Network",

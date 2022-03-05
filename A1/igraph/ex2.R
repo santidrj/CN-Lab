@@ -22,7 +22,7 @@ airports <-
     "ZVA"
   )
 g <-
-  read_graph(file.path("A1-networks", "real", "airports_UW.net"), format = "pajek")
+  read_graph(file.path("..", "A1-networks", "real", "airports_UW.net"), format = "pajek")
 g2 <- delete_edge_attr(g, "weight")
 
 d <- degree(g2, V(g2)[airports])
