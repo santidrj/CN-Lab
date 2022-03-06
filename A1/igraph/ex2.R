@@ -50,8 +50,13 @@ t <-
 t <- rownames_to_column(t, "Airport")
 t <- t %>%
   replace(is.na(.), 0) %>%
-  mutate(across(where(is.numeric), round, digits = 8)) %>%
+  mutate(across(where(is.numeric), round, digits = 8))
+  
+write.csv(t, file = file.path("..", "results", "airports_descriptors_r.csv"), row.names = F)
+
+t <- t %>%
   mutate(across(where(is.numeric), as.character))
+
 print(
   xtable(t),
   type = "latex",
