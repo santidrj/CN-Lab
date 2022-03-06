@@ -55,6 +55,6 @@ t <- t %>%
 print(
   xtable(t),
   type = "latex",
-  file = file.path("results", "airports_descriptors_latex_r.txt"),
+  file = file.path("..", "results", "airports_descriptors_latex_r.txt"),
   include.rownames = FALSE
 )
