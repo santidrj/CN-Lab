@@ -46,7 +46,7 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     cum.hist <- hist(k, breaks = n.bins, plot=FALSE)
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
-    plot(cum.hist, main = "CCDF", ylab = "pobability", xlab = "degree")
+    plot(cum.hist, main = "CCDF", ylab = "probability", xlab = "degree")
     dev.off()
 
     # # create x-axis labels
@@ -82,7 +82,7 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     cum.hist <- hist(log.k, breaks = n.bins, plot=FALSE)
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
-    plot(cum.hist, main = "CCDF", ylab = "pobability", xlab = "log10(degree)")
+    plot(cum.hist, main = "CCDF", ylab = "probability", xlab = "log10(degree)")
     dev.off()
 
   }
