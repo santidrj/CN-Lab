@@ -42,8 +42,12 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     cum.hist <- hist(k, breaks = n.bins, plot=FALSE)
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
+<<<<<<< HEAD
     plot(cum.hist, main = "CCDF", ylab = "pobability", xlab = "degree")
     lines(1:20,10*(1:20)^((-power$alpha)+1))
+=======
+    plot(cum.hist, main = "CCDF", ylab = "probability", xlab = "degree")
+>>>>>>> 3e8ec121e1da9fe29b9c3f2ccb6acf3495ac0fa4
     dev.off()
 
 
@@ -64,8 +68,12 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     cum.hist <- hist(log.k, breaks = n.bins, plot=FALSE)
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
+<<<<<<< HEAD
     plot(cum.hist, main = "CCDF", ylab = "pobability", xlab = "log10(degree)")
     lines(1:20,10*(1:20)^((-power$alpha)+1))
+=======
+    plot(cum.hist, main = "CCDF", ylab = "probability", xlab = "log10(degree)")
+>>>>>>> 3e8ec121e1da9fe29b9c3f2ccb6acf3495ac0fa4
     dev.off()
 
   }
