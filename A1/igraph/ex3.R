@@ -8,23 +8,19 @@ networks <- c("ER5000k8.net", "SF_1000_g2.7.net", "ws1000.net", "airports_UW.net
 for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.names = TRUE)) {
   if (basename(f) %in% networks) {
     g <- read.graph(f, format = "pajek")
-    degree.dist <- degree.distribution(g)
-    n.bins <- if (length(degree.dist) <= 30) length(degree.dist) else 30
     k <- degree(g)
-    min.k <- min(k)
-    max.k <- max(k)
     log.k <- log(k, 10)
-    step <- (log(max.k + 1, 10) - log(min.k, 10)) / (n.bins - 1)
-    bins <- seq(log(min.k, 10), log(max.k + 1, 10), step)
-    bin.count <- vector(length = n.bins)
-    counted <- 0
-    for (i in 1:(n.bins)) {
-      count <- sum(log.k >= bins[i] & log.k < bins[i + 1])
-      bin.count[i] <- count
-      counted <- counted + count
-    }
-    bin.count[n.bins] <- length(k) - counted
     
+    unique.degrees <- length(unique(unname(k)))
+    if (unique.degrees < 10)
+      n.bins <- 10
+    else if (unique.degrees > 30)
+      n.bins <- 30
+    else
+      n.bins <- unique.degrees 
+    
+    power<-power.law.fit(k)
+    print(power$KS.p)
 
     net.name = tools::file_path_sans_ext(basename(f))
     plots.path = file.path("..", "results", "histograms_r")
@@ -47,23 +43,9 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
     plot(cum.hist, main = "CCDF", ylab = "pobability", xlab = "degree")
+    lines(1:20,10*(1:20)^((-power$alpha)+1))
     dev.off()
 
-    # # create x-axis labels
-    # bar.names <- round(bins, digits = 2)
-    # # create positions for tick marks, one more than number of bars
-    # at_tick <- seq_len(n.bins + 1)
-    # # plot without axes
-    # barplot(bin.count, space = 0, names.arg = bar.names, main = "log-log PDF", axes = F)
-    # # add y-axis
-    # axis(side = 2, pos = -0.2)
-    # # add x-axis with offset positions, with ticks, but without labels.
-    # axis(side = 1, at = at_tick - 1, labels = FALSE)
-    
-    # barplot(degree.dist, space = 0, main = "log-log PDF using igraph", axes = F)
-    # at_tick <- seq(0, length(degree.dist) + 1, by = length(degree.dist)/10)
-    # axis(side = 2, pos = -1)
-    # axis(side = 1, at = at_tick - 1, labels = at_tick)
 
     png(file=file.path(plots.path, paste(net.name, "_PDF_log.png", sep="")))
     hist <- hist(log.k, breaks = n.bins)
@@ -83,6 +65,7 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
     plot(cum.hist, main = "CCDF", ylab = "pobability", xlab = "log10(degree)")
+    lines(1:20,10*(1:20)^((-power$alpha)+1))
     dev.off()
 
   }
