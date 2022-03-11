@@ -26,6 +26,21 @@ for (f in list.files(file.path("..", "A1-networks"),
     else
       n.bins <- unique.degrees
     
+    min.k <- min(k)
+    max.k <- max(k)
+    step <- (log(max.k + 1, 10) - log(min.k, 10)) / (n.bins - 1)
+    bins <- seq(log(min.k, 10), log(max.k + 1, 10), step)
+    bin.count <- vector(length = n.bins)
+    counted <- 0
+    for (i in 1:(n.bins)) {
+      count <- sum(log.k >= bins[i] & log.k < bins[i + 1])
+      bin.count[i] <- count
+      counted <- counted + count
+    }
+    bin.count[n.bins] <- length(k) - counted
+    prob.log.k <- bin.count / sum(bin.count)
+    
+    
     net.name = tools::file_path_sans_ext(basename(f))
     plots.path = file.path("..", "results", "histograms_r")
     
@@ -48,16 +63,19 @@ for (f in list.files(file.path("..", "A1-networks"),
     png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
                                              "")))
     plot(
-      hist$counts,
-      log = 'xy',
+      prob.log.k,
+      log = 'y',
       type = 'h',
       lwd = 10,
       lend = 2,
       col = 'gray',
       main = "PDF",
+      axes = F,
       ylab = "log(P(K))",
       xlab = "log(K)"
     )
+    axis(1, at = seq(1, length(bin.count), by = 1), labels = bins)
+    axis(2)
     dev.off()
     
     png(file = file.path(plots.path, paste(net.name, "_CCDF.png", sep =
@@ -74,16 +92,19 @@ for (f in list.files(file.path("..", "A1-networks"),
     png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep =
                                              "")))
     plot(
-      cum.hist$counts,
-      log = 'xy',
+      rev(cumsum(prob.log.k)),
+      log = 'y',
       type = 'h',
       lwd = 10,
       lend = 2,
       col = 'gray',
       main = "CCDF",
       ylab = "log(P(K))",
-      xlab = "log(K)"
+      xlab = "log(K)",
+      axes = F
     )
+    axis(1, at = seq(1, length(bin.count), by = 1), labels = bins)
+    axis(2)
     dev.off()
     
     # png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
