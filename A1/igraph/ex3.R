@@ -71,6 +71,20 @@ for (f in list.files(file.path("..", "A1-networks"),
          xlab = "degree")
     dev.off()
     
+    png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep =
+                                             "")))
+    plot(
+      cum.hist$counts,
+      log = 'xy',
+      type = 'h',
+      lwd = 10,
+      lend = 2,
+      col = 'gray',
+      main = "CCDF",
+      ylab = "log(P(K))",
+      xlab = "log(K)"
+    )
+    dev.off()
     
     # png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
     #                                          "")))
@@ -90,16 +104,16 @@ for (f in list.files(file.path("..", "A1-networks"),
     #      xlab = "log10(degree)")
     # dev.off()
     
-    png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep =
-                                             "")))
-    cum.hist <- hist(log.k, breaks = n.bins, plot = FALSE)
-    cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
-    cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
-    plot(cum.hist,
-         main = "CCDF",
-         ylab = "probability",
-         xlab = "log10(degree)")
-    dev.off()
+    # png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep =
+    #                                          "")))
+    # cum.hist <- hist(log.k, breaks = n.bins, plot = FALSE)
+    # cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
+    # cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
+    # plot(cum.hist,
+    #      main = "CCDF",
+    #      ylab = "probability",
+    #      xlab = "log10(degree)")
+    # dev.off()
     
   }
 }
