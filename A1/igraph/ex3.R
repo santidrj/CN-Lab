@@ -2,10 +2,17 @@ library(igraph)
 
 
 # networks <- c("ER5000k8.net")
-networks <- c("ER5000k8.net", "SF_1000_g2.7.net", "ws1000.net", "airports_UW.net", "PGP.net")
+networks <-
+  c("ER5000k8.net",
+    "SF_1000_g2.7.net",
+    "ws1000.net",
+    "airports_UW.net",
+    "PGP.net")
 
 
-for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.names = TRUE)) {
+for (f in list.files(file.path("..", "A1-networks"),
+                     recursive = TRUE,
+                     full.names = TRUE)) {
   if (basename(f) %in% networks) {
     g <- read.graph(f, format = "pajek")
     k <- degree(g)
@@ -17,14 +24,14 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     else if (unique.degrees > 30)
       n.bins <- 30
     else
-      n.bins <- unique.degrees 
+      n.bins <- unique.degrees
     
     net.name = tools::file_path_sans_ext(basename(f))
     plots.path = file.path("..", "results", "histograms_r")
-
-    png(file=file.path(plots.path, paste(net.name, "_PDF.png", sep="")))
+    
+    png(file = file.path(plots.path, paste(net.name, "_PDF.png", sep = "")))
     hist <- hist(k, breaks = n.bins)
-    hist$counts <- hist$counts/sum(hist$counts)
+    hist$counts <- hist$counts / sum(hist$counts)
     #---
     # Check the sum of probability and density
     # print("----------------------------")
@@ -32,20 +39,44 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     # print(paste("probability sum:", sum(hist$counts)))
     # print(paste("density sum:", sum(hist$density)))
     #---
-    plot(hist, main = "PDF", ylab="probability", xlab="degree")
+    plot(hist,
+         main = "PDF",
+         ylab = "probability",
+         xlab = "degree")
     dev.off()
-
-    png(file=file.path(plots.path, paste(net.name, "_CCDF.png", sep="")))
-    cum.hist <- hist(k, breaks = n.bins, plot=FALSE)
+    
+    png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
+                                             "")))
+    plot(
+      hist$counts,
+      log = 'xy',
+      type = 'h',
+      lwd = 10,
+      lend = 2,
+      col = 'gray',
+      main = "PDF",
+      ylab = "log(P(K))",
+      xlab = "log(K)"
+    )
+    dev.off()
+    
+    png(file = file.path(plots.path, paste(net.name, "_CCDF.png", sep =
+                                             "")))
+    cum.hist <- hist(k, breaks = n.bins, plot = FALSE)
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
-    plot(cum.hist, main = "CCDF", ylab = "probability", xlab = "degree")
+    plot(cum.hist,
+         main = "CCDF",
+         ylab = "probability",
+         xlab = "degree")
     dev.off()
-
-
-    png(file=file.path(plots.path, paste(net.name, "_PDF_log.png", sep="")))
-    hist <- hist(log.k, breaks = n.bins)
-    hist$counts <- hist$counts/sum(hist$counts)
+    
+    
+    # png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
+    #                                          "")))
+    # hist <- hist(log.k, breaks = n.bins)
+    # hist$counts[hist$counts > 0] <-
+    #   abs(log(hist$counts[hist$counts > 0] / sum(hist$counts)))
     #---
     # Check the sum of probability and density
     # print("----------------------------")
@@ -53,15 +84,22 @@ for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.name
     # print(paste("probability sum:", sum(hist$counts)))
     # print(paste("density sum:", sum(hist$density)))
     #---
-    plot(hist, main = "PDF", ylab="probability", xlab="log10(degree)")
-    dev.off()
-
-    png(file=file.path(plots.path, paste(net.name, "_CCDF_log.png", sep="")))
-    cum.hist <- hist(log.k, breaks = n.bins, plot=FALSE)
+    # plot(hist,
+    #      main = "PDF",
+    #      ylab = "probability",
+    #      xlab = "log10(degree)")
+    # dev.off()
+    
+    png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep =
+                                             "")))
+    cum.hist <- hist(log.k, breaks = n.bins, plot = FALSE)
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
-    plot(cum.hist, main = "CCDF", ylab = "probability", xlab = "log10(degree)")
+    plot(cum.hist,
+         main = "CCDF",
+         ylab = "probability",
+         xlab = "log10(degree)")
     dev.off()
-
+    
   }
 }
