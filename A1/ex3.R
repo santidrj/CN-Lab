@@ -120,8 +120,8 @@ for (f in list.files(file.path("A1-networks"),
     png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep ="")))
     ylim <- c(1e-4, 1)
     yticks <- 10^seq(-5L, 1L, 1L)
-    plot(
-      1-cumsum(prob.log.k),
+    plot(bins,
+      rev(cumsum(rev(prob.log.k))),
       log = 'y',
       type = 'h',
       lwd = 10,
