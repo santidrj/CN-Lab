@@ -1,7 +1,6 @@
 library(igraph)
 
 
-# networks <- c("ER5000k8.net")
 networks <-
   c("ER5000k8.net",
     "SF_1000_g2.7.net",
@@ -10,7 +9,7 @@ networks <-
     "PGP.net")
 
 
-for (f in list.files(file.path("..", "A1-networks"),
+for (f in list.files(file.path("A1-networks"),
                      recursive = TRUE,
                      full.names = TRUE)) {
   if (basename(f) %in% networks) {
@@ -42,7 +41,7 @@ for (f in list.files(file.path("..", "A1-networks"),
     
     
     net.name = tools::file_path_sans_ext(basename(f))
-    plots.path = file.path("..", "results", "histograms_r")
+    plots.path = file.path("results", "histograms_r")
 
     aux.seq = seq(-1000, 1000, 2000)
     
@@ -141,35 +140,5 @@ for (f in list.files(file.path("..", "A1-networks"),
       labels = parse(text = paste("10^", as.integer(log10(yticks)), sep = ""))
     )
     dev.off()
-    
-    # png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
-    #                                          "")))
-    # hist <- hist(log.k, breaks = n.bins)
-    # hist$counts[hist$counts > 0] <-
-    #   abs(log(hist$counts[hist$counts > 0] / sum(hist$counts)))
-    #---
-    # Check the sum of probability and density
-    # print("----------------------------")
-    # print(net.name)
-    # print(paste("probability sum:", sum(hist$counts)))
-    # print(paste("density sum:", sum(hist$density)))
-    #---
-    # plot(hist,
-    #      main = "PDF",
-    #      ylab = "probability",
-    #      xlab = "log10(degree)")
-    # dev.off()
-    
-    # png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep =
-    #                                          "")))
-    # cum.hist <- hist(log.k, breaks = n.bins, plot = FALSE)
-    # cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
-    # cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
-    # plot(cum.hist,
-    #      main = "CCDF",
-    #      ylab = "probability",
-    #      xlab = "log10(degree)")
-    # dev.off()
-    
   }
 }

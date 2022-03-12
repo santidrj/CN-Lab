@@ -22,7 +22,7 @@ airports <-
     "ZVA"
   )
 g <-
-  read_graph(file.path("..", "A1-networks", "real", "airports_UW.net"), format = "pajek")
+  read_graph(file.path("A1-networks", "real", "airports_UW.net"), format = "pajek")
 g2 <- delete_edge_attr(g, "weight")
 
 d <- degree(g2, V(g2)[airports])
@@ -52,7 +52,7 @@ t <- t %>%
   replace(is.na(.), 0) %>%
   mutate(across(where(is.numeric), round, digits = 8))
   
-write.csv(t, file = file.path("..", "results", "airports_descriptors_r.csv"), row.names = F)
+write.csv(t, file = file.path("results", "airports_descriptors_r.csv"), row.names = F)
 
 t <- t %>%
   mutate(across(where(is.numeric), as.character))
@@ -60,6 +60,6 @@ t <- t %>%
 print(
   xtable(t),
   type = "latex",
-  file = file.path("..", "results", "airports_descriptors_latex_r.txt"),
+  file = file.path("results", "airports_descriptors_latex_r.txt"),
   include.rownames = FALSE
 )

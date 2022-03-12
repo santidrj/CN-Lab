@@ -17,7 +17,7 @@ header <- c(
 t <- data.frame(matrix(nrow = 0, ncol = length(header)))
 colnames(t) <- header
 
-for (f in list.files(file.path("..", "A1-networks"), recursive = TRUE, full.names = TRUE)) {
+for (f in list.files(file.path("A1-networks"), recursive = TRUE, full.names = TRUE)) {
   g <- read.graph(f, format = "pajek")
   g <- delete_edge_attr(g, "weight")
   number_nodes <- gorder(g)
@@ -49,7 +49,7 @@ t <- t %>%
   replace(is.na(.), 0) %>%
   mutate(across(where(is.numeric), round, digits = 4))
   
-write.csv(t, file = file.path("..", "results", "networks_descriptors_r.csv"), row.names = F)
+write.csv(t, file = file.path("results", "networks_descriptors_r.csv"), row.names = F)
 
 t <- t %>%
   mutate(across(where(is.numeric), as.character))
@@ -57,7 +57,7 @@ t <- t %>%
 print(
   xtable(t),
   type = "latex",
-  file = file.path("..", "results", "networks_descriptors_latex_r.txt"),
+  file = file.path("results", "networks_descriptors_latex_r.txt"),
   include.rownames = FALSE
 )
 
