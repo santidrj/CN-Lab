@@ -122,7 +122,7 @@ for (f in list.files(file.path("..", "A1-networks"),
     ylim <- c(1e-4, 1)
     yticks <- 10^seq(-5L, 1L, 1L)
     plot(
-      rev(cumsum(prob.log.k)),
+      1-cumsum(prob.log.k),
       log = 'y',
       type = 'h',
       lwd = 10,
