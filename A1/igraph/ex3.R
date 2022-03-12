@@ -43,6 +43,8 @@ for (f in list.files(file.path("..", "A1-networks"),
     
     net.name = tools::file_path_sans_ext(basename(f))
     plots.path = file.path("..", "results", "histograms_r")
+
+    aux.seq = seq(-1000, 1000, 2000)
     
     png(file = file.path(plots.path, paste(net.name, "_PDF.png", sep = "")))
     hist <- hist(k, breaks = n.bins)
@@ -55,14 +57,27 @@ for (f in list.files(file.path("..", "A1-networks"),
     # print(paste("density sum:", sum(hist$density)))
     #---
     plot(hist,
-         main = "PDF",
-         ylab = "probability",
-         xlab = "degree")
+      main = "PDF",
+      ylab = "P(k)",
+      xlab = "k",
+      col = "gray",
+      border = "white",
+      axes = F
+    )
+    axis(1)
+    axis(1, at = aux.seq)
+    axis(2)
+    axis(2, at = aux.seq)
+
     dev.off()
     
-    png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
-                                             "")))
-    plot(
+
+    png(file = file.path(plots.path, paste(net.name, "_PDF_log.png",
+      sep = ""
+    )))
+    ylim <- c(1e-4, 1)
+    yticks <- 10^seq(-5L, 1L, 1L)
+    plot(bins,
       prob.log.k,
       log = 'y',
       type = 'h',
@@ -71,12 +86,18 @@ for (f in list.files(file.path("..", "A1-networks"),
       col = 'gray',
       main = "PDF",
       axes = F,
-      ylab = "log(P(K))",
-      xlab = "log(K)"
+      ylab = "P(K)",
+      xlab = "log(k)",
+      ylim = ylim
     )
-    axis(1, at = seq(1, length(bin.count), by = 1), labels = bins)
-    axis(2)
+    axis(1)
+    axis(1, at = aux.seq)
+    axis(2,
+      at = yticks,
+      labels = parse(text = paste("10^", as.integer(log10(yticks)), sep = ""))
+    )
     dev.off()
+
     
     png(file = file.path(plots.path, paste(net.name, "_CCDF.png", sep =
                                              "")))
@@ -84,13 +105,22 @@ for (f in list.files(file.path("..", "A1-networks"),
     cum.hist$counts <- cum.hist$counts / sum(cum.hist$counts)
     cum.hist$counts <- rev(cumsum(rev(cum.hist$counts)))
     plot(cum.hist,
-         main = "CCDF",
-         ylab = "probability",
-         xlab = "degree")
+      main = "CCDF",
+      ylab = "P(k)",
+      xlab = "k",
+      col = "gray",
+      border = "white",
+      axes = F
+    )
+    axis(1)
+    axis(1, at = aux.seq)
+    axis(2)
+    axis(2, at = aux.seq)
     dev.off()
     
-    png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep =
-                                             "")))
+    png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep ="")))
+    ylim <- c(1e-4, 1)
+    yticks <- 10^seq(-5L, 1L, 1L)
     plot(
       rev(cumsum(prob.log.k)),
       log = 'y',
@@ -99,12 +129,17 @@ for (f in list.files(file.path("..", "A1-networks"),
       lend = 2,
       col = 'gray',
       main = "CCDF",
-      ylab = "log(P(K))",
-      xlab = "log(K)",
-      axes = F
+      ylab = "P(k)",
+      xlab = "log10(k)",
+      axes = F,
+      ylim = ylim
     )
-    axis(1, at = seq(1, length(bin.count), by = 1), labels = bins)
-    axis(2)
+    axis(1)
+    axis(1, at = aux.seq)
+    axis(2,
+      at = yticks,
+      labels = parse(text = paste("10^", as.integer(log10(yticks)), sep = ""))
+    )
     dev.off()
     
     # png(file = file.path(plots.path, paste(net.name, "_PDF_log.png", sep =
