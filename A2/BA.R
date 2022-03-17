@@ -2,8 +2,8 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 50
-m <- 2
+N <- 100
+m <- 5
 
 if (N < 5) {
   g <- make_empty_graph(directed = F) + vertices(1:N) + path(1:N, 1)
@@ -32,7 +32,7 @@ png(
   res = 1200,
   pointsize = 4
 )
-plot(g, layout = layout_nicely, vertex.size=5)
+plot(g, layout = layout_with_kk, vertex.size=5, vertex.label = NA)
 dev.off()
 
 png(file = file.path(
