@@ -3,8 +3,8 @@ library(dplyr)
 
 # Erdős-Rényi model
 
-N <- 50
-K <- 100
+N <- 1000
+K <- 2000
 
 stopifnot(K <= N*(N-1)/2)
 
@@ -25,32 +25,10 @@ g <- g + edges(unlist(final.edges))
 sprintf("Average degree of G: %d", mean(degree(g)))
 stopifnot(mean(degree(g)) <= 20)
 
-plots.path = "figures"
 
-png(
-  file = file.path(plots.path, paste("ER-", N, "-", K, ".png", sep = "")),
-  width = 10,
-  height = 10,
-  units = "cm",
-  res = 1200,
-  pointsize = 4
-)
-plot(g, layout = layout_nicely, vertex.size=5, vertex.label = NA)
-dev.off()
-
-png(file = file.path(
-  plots.path,
-  paste("Degree-distribution-ER-", N, "-", K, ".png", sep = "")
-))
-plot(
-  degree.distribution(g, cumulative = T),
-  type = 'h',
-  # log = 'y',
-  lwd = 20,
-  lend = 1,
-  col = 'gray',
-  main = "PDF",
-  xlab = "Degree k",
-  ylab = "P(k)",
-)
-dev.off()
+source("utils.R")
+if (N < 1000) {
+  plot.graph(g, paste("ER-", N, "-", K, sep = ""))
+} else {
+  plot.hists(g, paste("ER-", N, "-", K, sep = ""), F)
+}

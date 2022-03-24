@@ -2,7 +2,7 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 100
+N <- 1000
 m <- 5
 
 if (N < 5) {
@@ -22,32 +22,9 @@ if (N < 5) {
 
 stopifnot(mean(degree(g)) <= 20)
 
-plots.path = "figures"
-
-png(
-  file = file.path(plots.path, paste("BA-", N, "-", m, ".png", sep = "")),
-  width = 10,
-  height = 10,
-  units = "cm",
-  res = 1200,
-  pointsize = 4
-)
-plot(g, layout = layout_with_kk, vertex.size=5, vertex.label = NA)
-dev.off()
-
-png(file = file.path(
-  plots.path,
-  paste("Degree-distribution-BA-", N, "-", m, ".png", sep = "")
-))
-plot(
-  degree.distribution(g, cumulative = T),
-  type = 'h',
-  # log = 'y',
-  lwd = 20,
-  lend = 1,
-  col = 'gray',
-  main = "PDF",
-  xlab = "Degree k",
-  ylab = "P(k)",
-)
-dev.off()
+source("utils.R")
+if (N < 1000) {
+  plot.graph(g, paste("BA-", N, "-", m, sep = ""))
+} else {
+  plot.hists(g, paste("BA-", N, "-", m, sep = ""))
+}

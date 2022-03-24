@@ -18,7 +18,7 @@ sample_dist <- function(dist_name) {
 }
 
 selection.prob <- function(x) {
-  return(1-length(V(x))/N)
+  return(1 - length(V(x)) / N)
 }
 
 repeat {
@@ -42,10 +42,10 @@ repeat {
     }
   }
   slots <- fyshuffle(slots)
-
+  
   node_1 <- slots[seq(1, sum(degrees), 2)]
   node_2 <- slots[seq(2, sum(degrees), 2)]
-
+  
   # Remove multi-edges and self-loops
   slots <- rbind(data.frame(node_1, node_2), final.slots) %>%
     filter(node_1 != node_2) %>%
@@ -53,8 +53,8 @@ repeat {
     slice(1) %>%
     ungroup() %>%
     select(-grp)
-
-
+  
+  
   # Count the number of stubs that will not be free any more
   selected.slots <-
     full_join(count(slots, node_1),
@@ -65,23 +65,25 @@ repeat {
   free.slots <-
     left_join(free.slots, selected.slots[c('node_1', 'count')], by = c("node" = "node_1"))
   free.slots[is.na(free.slots)] <- 0
-
+  
   # Get the remaining free stubs for each node
   old.degrees <- degrees
   degrees <- free.slots$degrees - free.slots$count
   free.slots <- subset(free.slots, select = -c(count))
-
+  
   if (all(old.degrees == degrees)) {
     stall.iter <- stall.iter + 1
   }
-
+  
   # If there are no more free stubs we exit the loop else,
   # if there are more free stubs than nodes we undo the changes and start again
   if (sum(degrees != 0) <= 0) {
     final.slots <- slots
     print("Exit loop")
     break
-  } else if ((sum(degrees) / 2 >= sum(degrees != 0)) || stall.iter > 10) {
+  } else if ((sum(degrees) / 2 >= sum(degrees != 0)) ||
+             stall.iter > 10) {
+    print("Undo last changes and try again")
     degrees <- aux.degrees
     final.slots <- data.frame()
     free.slots <- data.frame(degrees)
@@ -94,7 +96,7 @@ repeat {
     sprintf("Stall iterations %d", stall.iter)
     final.slots <- slots
   }
-
+  
 }
 
 g <- make_empty_graph(directed = F) + vertices(1:N)
@@ -109,7 +111,7 @@ edges_list <-
   unlist()
 g <- g + edges(edges_list)
 
-# To avoid disconnected components in the network we randomly select pairs of 
+# To avoid disconnected components in the network we randomly select pairs of
 # disconnected components and add a new edge between them until the network
 # is fully connected.
 components <- decompose(g)
@@ -124,39 +126,15 @@ while (length(components) > 1) {
 
 stopifnot(mean(degree(g)) <= 20)
 
-plots.path = "figures"
-
 if (P == "poisson") {
-    fn <- paste(P, "-", N, "-", k, sep = "")
-}
-if (P == "power-law") {
-    fn <- paste(P, "-", N, "-", alpha, sep = "")
+  fn <- paste(P, "-", N, "-", k, sep = "")
+} else if (P == "power-law") {
+  fn <- paste(P, "-", N, "-", alpha, sep = "")
 }
 
-png(
-  file = file.path(plots.path, paste("CM-", fn, ".png", sep = "")),
-  width = 10,
-  height = 10,
-  units = "cm",
-  res = 1200,
-  pointsize = 4
-)
-plot(g, layout = layout_with_kk, vertex.size=5, vertex.label = NA)
-dev.off()
-
-png(file = file.path(
-  plots.path,
-  paste("Degree-distribution-CM-", fn, ".png", sep = "")
-))
-plot(
-  degree.distribution(g, cumulative = T),
-  type = 'h',
-  # log = 'y',
-  lwd = 20,
-  lend = 1,
-  col = 'gray',
-  main = "PDF",
-  xlab = "Degree k",
-  ylab = "P(k)",
-)
-dev.off()
+source("utils.R")
+if (N < 1000) {
+  plot.graph(g, paste("CM-", fn, sep = ""))
+} else {
+  plot.hists(g, paste("CM-", fn, sep = ""))
+}
