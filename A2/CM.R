@@ -3,10 +3,10 @@ library(fgpt)
 library(dplyr)
 library(poweRlaw)
 
-N <- 20
+N <- 50
 k <- 5              # parameter in Poisson distribution
 alpha <- 3          # parameter power-law distributions
-P <- "poisson"
+P <- "power-law"
 
 sample_dist <- function(dist_name) {
   if (dist_name == "poisson") {
@@ -15,6 +15,10 @@ sample_dist <- function(dist_name) {
   if (dist_name == "power-law") {
     return(rpldis(N, xmin = 1, alpha))
   }
+}
+
+selection.prob <- function(x) {
+  return(1-length(V(x))/N)
 }
 
 repeat {
@@ -74,47 +78,24 @@ repeat {
   # If there are no more free stubs we exit the loop else,
   # if there are more free stubs than nodes we undo the changes and start again
   if (sum(degrees != 0) <= 0) {
-    # degrees <- free.slots$degrees
-    print(sum(degrees))
     final.slots <- slots
     print("Exit loop")
     break
   } else if ((sum(degrees) / 2 >= sum(degrees != 0)) || stall.iter > 10) {
-    # Reset variables
     degrees <- aux.degrees
     final.slots <- data.frame()
     free.slots <- data.frame(degrees)
     free.slots$node <- 1:nrow(free.slots)
     stall.iter <- 0
   } else {
-    # degrees <- free.slots$degrees
-    print(sum(degrees))
+    print("Remaining slots for each node")
     print(degrees)
-    print(stall.iter)
+    sprintf("Total remaining slots %d", sum(degrees))
+    sprintf("Stall iterations %d", stall.iter)
     final.slots <- slots
   }
 
 }
-
-# TODO: remove multiedges and self-loops
-# The approach below is too slow.
-# Instead of shuffling the whole colum when we
-# find multiedges or self-loops, we should swap
-# conflictive, individual values by other ones in the column and recheck
-
-# repeat {
-#     slots <- data.frame(node_2 = apply(slots, 1, min), node_1 = apply(slots, 1, max))   # so we can detect multiedges of type 1 2, 2 1
-#     print("hello")
-#     multiedges <- slots %>%
-#         duplicated() %>%
-#         any()
-#     self_loops <- any(slots$node_1 == slots$node_2)
-#     if (multiedges | self_loops) {
-#         slots$node_1 <- sample(slots$node_1)
-#         } else {
-#             break
-#         }
-# }
 
 g <- make_empty_graph(directed = F) + vertices(1:N)
 edges_list <-
@@ -127,6 +108,19 @@ edges_list <-
   ) %>%
   unlist()
 g <- g + edges(edges_list)
+
+# To avoid disconnected components in the network we randomly select pairs of 
+# disconnected components and add a new edge between them until the network
+# is fully connected.
+components <- decompose(g)
+while (length(components) > 1) {
+  prob <- lapply(components, selection.prob)
+  comp <- sample(components, 2, replace = F, prob = prob)
+  v1 <- sample(V(comp[[1]]), 1, replace = F)
+  v2 <- sample(V(comp[[2]]), 1, replace = F)
+  g <- g + edge(v1$name, v2$name)
+  components <- decompose(g)
+}
 
 stopifnot(mean(degree(g)) <= 20)
 
