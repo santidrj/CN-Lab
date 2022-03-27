@@ -6,6 +6,7 @@ library(poweRlaw)
 N <- 1000
 k <- 5              # parameter in Poisson distribution
 alpha <- 3          # parameter power-law distributions
+xmin <- 1
 P <- "poisson"
 
 set.seed(10)
@@ -15,7 +16,7 @@ sample_dist <- function(dist_name) {
     return(rpois(N, k))
   }
   if (dist_name == "power-law") {
-    return(rpldis(N, xmin = 1, alpha))
+    return(rpldis(N, xmin, alpha))
   }
 }
 
@@ -120,8 +121,19 @@ components <- decompose(g)
 while (length(components) > 1) {
   prob <- lapply(components, selection.prob)
   comp <- sample(components, 2, replace = F, prob = prob)
-  v1 <- sample(V(comp[[1]]), 1, replace = F)
-  v2 <- sample(V(comp[[2]]), 1, replace = F)
+  vertices1 <- V(comp[[1]])
+  vertices2 <- V(comp[[2]])
+  if (length(vertices1) > 1) {
+    v1 <- sample(V(comp[[1]]), 1, replace = F)
+  } else {
+    v1 <- vertices1
+  }
+  
+  if (length(vertices2) > 1) {
+    v2 <- sample(V(comp[[2]]), 1, replace = F)
+  } else {
+    v2 <- vertices2
+  }
   g <- g + edge(v1$name, v2$name)
   components <- decompose(g)
 }
@@ -141,6 +153,7 @@ if (N < 1000) {
 } else {
   plot.hists(g, file.name, log_log = (P == "power-law"))
   if (P == "power-law") {
+    plot.power.law(xmin, alpha)
     pdf.log.bins <- make.pdf.bins(degree(g))
     pdf.log.bins$pdf[pdf.log.bins$pdf != 0] <-
       log10(pdf.log.bins$pdf[pdf.log.bins$pdf != 0])

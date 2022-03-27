@@ -30,6 +30,7 @@ file.name <- paste("BA-", N, "-", m, sep = "")
 if (N < 1000) {
   plot.graph(g, file.name)
 } else {
+  plot.power.law(1, 3)
   plot.hists(g, file.name)
   
   pdf.log.bins <- make.pdf.bins(degree(g))
