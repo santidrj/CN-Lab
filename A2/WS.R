@@ -6,6 +6,9 @@ N <- 50
 k <- 6
 p <- 0
 
+# Fix seed in order to make the results reproducible
+set.seed(20)
+
 stopifnot((k %% 2) == 0)
 stopifnot(k <= 20)
 stopifnot(k < N)

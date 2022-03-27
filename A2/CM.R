@@ -9,6 +9,7 @@ alpha <- 3          # parameter power-law distributions
 xmin <- 1
 P <- "poisson"
 
+# Fix seed in order to make the results reproducible
 set.seed(10)
 
 sample_dist <- function(dist_name) {

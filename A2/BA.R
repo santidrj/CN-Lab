@@ -2,7 +2,7 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 10000
+N <- 1000
 m <- 5
 
 # Fix seed in order to make the results reproducible
