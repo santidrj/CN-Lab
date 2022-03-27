@@ -9,6 +9,37 @@ MLE.alpha <- function(k) {
   return(1 + n / sum(aux))
 }
 
+WS.dist <- function(degrees, K, p) {
+  
+  K2 <- K / 2
+
+  if (min(degrees) < k2) {
+    print("Minimum degree must be equal or larger than mean degree divided by two")
+    return(NULL)
+  }
+  arg.sum <- function(k, n) {
+    term1 <- choose(K2, n)
+    term2 <- (1 - p) ^ n
+    term3 <- p ^ (K2 - n)
+    term4num <- (p * K2) ^ (k - K2 - n)
+    term4den <- factorial(k - K2 - n)
+    term5 <- exp(-p * K2)
+    return(term1 * term2 * term3 * (term4num / term4den) * term5)
+  }
+
+  P <- NULL
+  for (k in degrees) {
+    f.k.K <- min(k - K2, K2)
+    Pk <- 0
+    for (n in 0:f.k.K) {
+      Pk <- Pk + arg.sum(k, n)
+    }
+    P <- append(P, Pk)
+  }
+
+  return(P)
+}
+
 plot.graph <- function(g, net.name) {
   plots.path = file.path("figures")
   png(
