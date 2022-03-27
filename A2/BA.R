@@ -2,7 +2,7 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 1000
+N <- 100
 m <- 5
 
 if (N < 5) {
@@ -26,5 +26,6 @@ source("utils.R")
 if (N < 1000) {
   plot.graph(g, paste("BA-", N, "-", m, sep = ""))
 } else {
+  plot.power.law(1, 3)
   plot.hists(g, paste("BA-", N, "-", m, sep = ""))
 }

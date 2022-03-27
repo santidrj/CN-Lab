@@ -22,13 +22,16 @@ final.edges <- sample(mapply(c, pairs$Var1, pairs$Var2, USE.NAMES = F, SIMPLIFY 
 
 g <- g + edges(unlist(final.edges))
 
-sprintf("Average degree of G: %d", mean(degree(g)))
-stopifnot(mean(degree(g)) <= 20)
+sprintf("Average degree of G: %d", ceiling(mean(degree(g))))
 
+stopifnot(mean(degree(g)) <= 20)
 
 source("utils.R")
 if (N < 1000) {
   plot.graph(g, paste("ER-", N, "-", K, sep = ""))
 } else {
+  p = 2 * K / (N*(N-1))
+  plot.binomial(N, p)
+  plot.poisson(N*p)
   plot.hists(g, paste("ER-", N, "-", K, sep = ""), F)
 }

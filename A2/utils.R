@@ -1,3 +1,6 @@
+library(igraph)
+library(poweRlaw)
+
 plot.graph <- function(g, net.name) {
   plots.path = file.path("figures")
   png(
@@ -12,6 +15,47 @@ plot.graph <- function(g, net.name) {
        layout = layout_with_kk,
        vertex.size = 5,
        vertex.label = NA)
+  dev.off()
+}
+
+plot.binomial <- function(n, p) {
+  success <- 0:20
+  
+  plots.path = file.path("figures", "histograms_r")
+  png(file = file.path(plots.path, paste("Binomial_", N,"_", p, ".png", sep = "")))
+  plot(success,dbinom(success,size=n,prob=n),
+       type='h',
+       main= paste('Binomial Distribution (n=', n,' p=', p, ')'),
+       ylab='Probability',
+       xlab ='The degree k',
+       lwd=3)
+  dev.off()
+}
+
+plot.poisson <- function(lambda) {
+  success <- 0:20
+  
+  plots.path = file.path("figures", "histograms_r")
+  png(file = file.path(plots.path, paste("Poisson_", lambda, ".png", sep = "")))
+  plot(success,dpois(success,lambda),
+       type='h',
+       main= paste('Poisson Distribution (lamda=', lambda, ')'),
+       ylab='Probability',
+       xlab ='The degree k',
+       lwd=3)
+  dev.off()
+}
+
+plot.power.law <- function(xmin, alpha) {
+  x = xmin:100
+  plots.path = file.path("figures", "histograms_r")
+  png(file = file.path(plots.path, paste("Power-law_", alpha, ".png", sep = "")))
+  plot(x,dpldis(x,xmin, alpha),
+       type='l',
+       main= paste('Power-law Distribution (alpha=', alpha, ')'),
+       ylab='Probability',
+       xlab ='The degree k',
+       log = 'xy')
   dev.off()
 }
 

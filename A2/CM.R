@@ -4,16 +4,17 @@ library(dplyr)
 library(poweRlaw)
 
 N <- 50
-k <- 5              # parameter in Poisson distribution
-alpha <- 3          # parameter power-law distributions
-P <- "power-law"
+k <- 2              # parameter in Poisson distribution
+alpha <- 3.5          # parameter power-law distributions
+xmin <- 1
+P <- "poisson"
 
 sample_dist <- function(dist_name) {
   if (dist_name == "poisson") {
     return(rpois(N, k))
   }
   if (dist_name == "power-law") {
-    return(rpldis(N, xmin = 1, alpha))
+    return(rpldis(N, xmin, alpha))
   }
 }
 
@@ -118,8 +119,19 @@ components <- decompose(g)
 while (length(components) > 1) {
   prob <- lapply(components, selection.prob)
   comp <- sample(components, 2, replace = F, prob = prob)
-  v1 <- sample(V(comp[[1]]), 1, replace = F)
-  v2 <- sample(V(comp[[2]]), 1, replace = F)
+  vertices1 <- V(comp[[1]])
+  vertices2 <- V(comp[[2]])
+  if (length(vertices1) > 1) {
+    v1 <- sample(V(comp[[1]]), 1, replace = F)
+  } else {
+    v1 <- vertices1
+  }
+  
+  if (length(vertices2) > 1) {
+    v2 <- sample(V(comp[[2]]), 1, replace = F)
+  } else {
+    v2 <- vertices2
+  }
   g <- g + edge(v1$name, v2$name)
   components <- decompose(g)
 }
@@ -136,5 +148,6 @@ source("utils.R")
 if (N < 1000) {
   plot.graph(g, paste("CM-", fn, sep = ""))
 } else {
+  plot.power.law(xmin, alpha)
   plot.hists(g, paste("CM-", fn, sep = ""))
 }
