@@ -2,7 +2,7 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 1000
+N <- 10000
 m <- 5
 
 # Fix seed in order to make the results reproducible
@@ -30,7 +30,7 @@ file.name <- paste("BA-", N, "-", m, sep = "")
 if (N < 1000) {
   plot.graph(g, file.name)
 } else {
-  plot.power.law(1, 3)
+  # plot.power.law(1, 3)
   plot.hists(g, file.name)
   
   pdf.log.bins <- make.pdf.bins(degree(g))
@@ -53,6 +53,9 @@ if (N < 1000) {
   s3 <-
     sprintf("Alpha using igraph: %f", power.law.fit(degree(g))$alpha)
   
+  s4 <-
+    sprintf("Alpha using MLE: %f", MLE.alpha(degree(g)))
+  
   dir.create("results", showWarnings = F)
   writeLines(s1, file.path("results", paste(file.name, ".txt", sep = "")))
   write(s2,
@@ -60,6 +63,10 @@ if (N < 1000) {
         append = T,
         sep = "\n")
   write(s3,
+        file.path("results", paste(file.name, ".txt", sep = "")),
+        append = T,
+        sep = "\n")
+  write(s4,
         file.path("results", paste(file.name, ".txt", sep = "")),
         append = T,
         sep = "\n")

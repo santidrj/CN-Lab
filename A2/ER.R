@@ -3,8 +3,8 @@ library(dplyr)
 
 # Erdős-Rényi model
 
-N <- 1000
-K <- 2000
+N <- 10000
+K <- 20000
 
 # Fix seed in order to make the results reproducible
 set.seed(20)

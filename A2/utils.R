@@ -114,22 +114,13 @@ make.ccdf.bins <- function(x, min.bins = 10, max.bins = 30) {
   return(list(bins = pdf.bins$bins, ccdf = rev(cumsum(rev(pdf.bins$pdf)))))
 }
 
-plot.loglog.hist <- function(k, plots.path, net.name, xmin = 1, power = 3) {
+plot.loglog.hist <- function(k, plots.path, net.name, xmin = 1, alpha = 3) {
   log.bins <- make.pdf.bins(k)
   bins <- log.bins$bins
   prob.log.k <- log.bins$pdf
   
   aux.seq = seq(-1000, 1000, 2000)
 
-  # p <- ggplot(as.data.frame(list(bins=bins, pdf=prob.log.k)), aes(x=bins, y=pdf)) +
-  #   geom_col()
-  # # Log base 10 scale + log ticks (on left and bottom side)
-  # p + scale_y_continuous(trans = 'log10') +
-  #   annotation_logticks(sides="lb")
-  # 
-  # ggsave(file.path(plots.path, paste(net.name, "_PDF_log.png",
-  #                                        sep = "")))
-  
   png(file = file.path(plots.path, paste(net.name, "_PDF_log.png",
                                          sep = "")))
 
@@ -192,7 +183,8 @@ plot.loglog.hist <- function(k, plots.path, net.name, xmin = 1, power = 3) {
   
   dev.off()
 }
-plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, power = 3) {
+
+plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha = 3) {
   k <- degree(g)
   unique.degrees <- length(unique(unname(k)))
   if (unique.degrees < 10)
@@ -218,14 +210,14 @@ plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, power
     xlab = "k",
     col = "gray",
     border = "white",
-    axes = F
+    axes = F,
+    ylim = c(0, max(hist$counts) + 0.05),
   )
   
-  if (!is.na(lambda)) {
-    x <- rpois(1000, lambda)
-    dp <- function(x, lmd = lambda) dpois(x, lambda = lmd)
-    # samples <- seq(0, 20, 0.1)
-    curve(dp, 0, 20, col = "blue", add = T, yaxt = "n", xaxt = "n")
+  if (!is.na(lambda) && !log.log) {
+    # x <- rpois(1000, lambda)
+    # dp <- function(x, lmd = lambda) dpois(x, lambda = lmd)
+    lines(dpois(0:1000, lambda), col = "blue", yaxt = "n", xaxt = "n")
   }
   
   axis(1)
@@ -257,6 +249,6 @@ plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, power
   dev.off()
   
   if (log.log)  {
-    plot.loglog.hist(k, plots.path, net.name, xmin, power)
+    plot.loglog.hist(k, plots.path, net.name, xmin, alpha)
   }
 }
