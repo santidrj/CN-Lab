@@ -1,3 +1,9 @@
+library(igraph)
+
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
 plot.graph <- function(g, net.name) {
   plots.path = file.path("figures")
   png(
@@ -13,6 +19,34 @@ plot.graph <- function(g, net.name) {
        vertex.size = 5,
        vertex.label = NA)
   dev.off()
+}
+
+make.ccdf.bins <- function(x, min.bins = 10, max.bins = 30) {
+  unique.values <- length(unique(x))
+  if (unique.values < min.bins)
+    n.bins <- 10
+  else if (unique.values > max.bins)
+    n.bins <- 30
+  else
+    n.bins <- unique.values
+  
+  log.x <- log(x, 10)
+  min.x <- min(x)
+  max.x <- max(x)
+  step <- (log(max.x + 1, 10) - log(min.x, 10)) / (n.bins - 1)
+  bins <- seq(log(min.x, 10), log(max.x + 1, 10), step)
+  bin.count <- vector(length = n.bins)
+  
+  counted <- 0
+  for (i in 1:(n.bins)) {
+    count <- sum(log.x >= bins[i] & log.x < bins[i + 1])
+    bin.count[i] <- count
+    counted <- counted + count
+  }
+  bin.count[n.bins] <- length(x) - counted
+  prob.log.x <- bin.count / sum(bin.count)
+  
+  return(list(bins = bins, ccdf = rev(cumsum(rev(prob.log.x)))))
 }
 
 plot.hists <- function(g, net.name, log_log = TRUE) {
@@ -71,21 +105,24 @@ plot.hists <- function(g, net.name, log_log = TRUE) {
   dev.off()
   
   if (log_log) {
-    log.k <- log(k, 10)
-    min.k <- min(k)
-    max.k <- max(k)
-    step <- (log(max.k + 1, 10) - log(min.k, 10)) / (n.bins - 1)
-    bins <- seq(log(min.k, 10), log(max.k + 1, 10), step)
-    bin.count <- vector(length = n.bins)
-    
-    counted <- 0
-    for (i in 1:(n.bins)) {
-      count <- sum(log.k >= bins[i] & log.k < bins[i + 1])
-      bin.count[i] <- count
-      counted <- counted + count
-    }
-    bin.count[n.bins] <- length(k) - counted
-    prob.log.k <- bin.count / sum(bin.count)
+    log.bins <- make.log.bins(k)
+    bins <- log.bins$bins
+    prob.log.k <- log.bins$prob.log
+    # log.k <- log(k, 10)
+    # min.k <- min(k)
+    # max.k <- max(k)
+    # step <- (log(max.k + 1, 10) - log(min.k, 10)) / (n.bins - 1)
+    # bins <- seq(log(min.k, 10), log(max.k + 1, 10), step)
+    # bin.count <- vector(length = n.bins)
+    # 
+    # counted <- 0
+    # for (i in 1:(n.bins)) {
+    #   count <- sum(log.k >= bins[i] & log.k < bins[i + 1])
+    #   bin.count[i] <- count
+    #   counted <- counted + count
+    # }
+    # bin.count[n.bins] <- length(k) - counted
+    # prob.log.k <- bin.count / sum(bin.count)
     
     
     
