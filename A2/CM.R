@@ -137,4 +137,10 @@ if (N < 1000) {
   plot.graph(g, paste("CM-", fn, sep = ""))
 } else {
   plot.hists(g, paste("CM-", fn, sep = ""))
+  log.bins <- make.ccdf.bins(degree(g))
+  log.bins$ccdf[log.bins$ccdf != 0] <- log10(log.bins$ccdf[log.bins$ccdf != 0])
+  lr <- lm(log.bins$ccdf ~ log.bins$bins)
+  alpha <- 1 - lr$coefficient[2]
+  print(sprintf("Alpha computed manually using the CCDF: %f", alpha))
+  print(sprintf("Alpha using igraph: %f", power.law.fit(degree(g))$alpha))
 }
