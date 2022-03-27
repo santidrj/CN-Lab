@@ -1,0 +1,3 @@
+Alpha computed manually using the PDF: 1.325727
+Alpha computed manually using the CCDF: 2.185021
+Alpha using igraph: 2.771852

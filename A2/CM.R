@@ -3,10 +3,12 @@ library(fgpt)
 library(dplyr)
 library(poweRlaw)
 
-N <- 50
+N <- 1000
 k <- 5              # parameter in Poisson distribution
 alpha <- 3          # parameter power-law distributions
-P <- "power-law"
+P <- "poisson"
+
+set.seed(10)
 
 sample_dist <- function(dist_name) {
   if (dist_name == "poisson") {
@@ -133,14 +135,39 @@ if (P == "poisson") {
 }
 
 source("utils.R")
+file.name <- paste("CM-", fn, sep = "")
 if (N < 1000) {
-  plot.graph(g, paste("CM-", fn, sep = ""))
+  plot.graph(g, file.name)
 } else {
-  plot.hists(g, paste("CM-", fn, sep = ""))
-  log.bins <- make.ccdf.bins(degree(g))
-  log.bins$ccdf[log.bins$ccdf != 0] <- log10(log.bins$ccdf[log.bins$ccdf != 0])
-  lr <- lm(log.bins$ccdf ~ log.bins$bins)
-  alpha <- 1 - lr$coefficient[2]
-  print(sprintf("Alpha computed manually using the CCDF: %f", alpha))
-  print(sprintf("Alpha using igraph: %f", power.law.fit(degree(g))$alpha))
+  plot.hists(g, file.name, log_log = (P == "power-law"))
+  if (P == "power-law") {
+    pdf.log.bins <- make.pdf.bins(degree(g))
+    pdf.log.bins$pdf[pdf.log.bins$pdf != 0] <-
+      log10(pdf.log.bins$pdf[pdf.log.bins$pdf != 0])
+    lr <- lm(pdf.log.bins$pdf ~ pdf.log.bins$bins)
+    pdf.alpha <- 1 - lr$coefficient[2]
+    s1 <- sprintf("Alpha computed manually using the PDF: %f", pdf.alpha)
+    
+    log.bins <- make.ccdf.bins(degree(g))
+    log.bins$ccdf[log.bins$ccdf != 0] <-
+      log10(log.bins$ccdf[log.bins$ccdf != 0])
+    lr <- lm(log.bins$ccdf ~ log.bins$bins)
+    alpha <- 1 - lr$coefficient[2]
+    s2 <- sprintf("Alpha computed manually using the CCDF: %f", alpha)
+    
+    
+    s3 <-
+      sprintf("Alpha using igraph: %f", power.law.fit(degree(g))$alpha)
+    
+    dir.create("results", showWarnings = F)
+    writeLines(s1, file.path("results", paste(file.name, ".txt", sep = "")))
+    write(s2,
+          file.path("results", paste(file.name, ".txt", sep = "")),
+          append = T,
+          sep = "\n")
+    write(s3,
+          file.path("results", paste(file.name, ".txt", sep = "")),
+          append = T,
+          sep = "\n")
+  }
 }
