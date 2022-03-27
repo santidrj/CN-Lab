@@ -1,6 +1,13 @@
 library(igraph)
 library(poweRlaw)
 
+MLE.alpha <- function(k) {
+  min.k <- min(k)
+  n <- length(k)
+  aux <- log(k / (min.k - 1 / 2))
+  return(1 + n / sum(aux))
+}
+
 plot.graph <- function(g, net.name) {
   plots.path = file.path("figures")
   png(
@@ -59,6 +66,39 @@ plot.power.law <- function(xmin, alpha) {
   dev.off()
 }
 
+make.pdf.bins <- function(x, min.bins = 10, max.bins = 30) {
+  unique.values <- length(unique(x))
+  if (unique.values < min.bins)
+    n.bins <- 10
+  else if (unique.values > max.bins)
+    n.bins <- 30
+  else
+    n.bins <- unique.values
+  
+  log.x <- log(x, 10)
+  min.x <- min(x)
+  max.x <- max(x)
+  step <- (log(max.x + 1, 10) - log(min.x, 10)) / (n.bins - 1)
+  bins <- seq(log(min.x, 10), log(max.x + 1, 10), step)
+  bin.count <- vector(length = n.bins)
+  
+  counted <- 0
+  for (i in 1:(n.bins)) {
+    count <- sum(log.x >= bins[i] & log.x < bins[i + 1])
+    bin.count[i] <- count
+    counted <- counted + count
+  }
+  bin.count[n.bins] <- length(x) - counted
+  prob.log.x <- bin.count / sum(bin.count)
+  
+  return(list(bins = bins, pdf = prob.log.x))
+}
+
+make.ccdf.bins <- function(x, min.bins = 10, max.bins = 30) {
+  pdf.bins <- make.pdf.bins(x, min.bins, max.bins)  
+  return(list(bins = pdf.bins$bins, ccdf = rev(cumsum(rev(pdf.bins$pdf)))))
+}
+
 plot.hists <- function(g, net.name, log_log = TRUE) {
   k <- degree(g)
   unique.degrees <- length(unique(unname(k)))
@@ -115,21 +155,24 @@ plot.hists <- function(g, net.name, log_log = TRUE) {
   dev.off()
   
   if (log_log) {
-    log.k <- log(k, 10)
-    min.k <- min(k)
-    max.k <- max(k)
-    step <- (log(max.k + 1, 10) - log(min.k, 10)) / (n.bins - 1)
-    bins <- seq(log(min.k, 10), log(max.k + 1, 10), step)
-    bin.count <- vector(length = n.bins)
-    
-    counted <- 0
-    for (i in 1:(n.bins)) {
-      count <- sum(log.k >= bins[i] & log.k < bins[i + 1])
-      bin.count[i] <- count
-      counted <- counted + count
-    }
-    bin.count[n.bins] <- length(k) - counted
-    prob.log.k <- bin.count / sum(bin.count)
+    log.bins <- make.pdf.bins(k)
+    bins <- log.bins$bins
+    prob.log.k <- log.bins$pdf
+    # log.k <- log(k, 10)
+    # min.k <- min(k)
+    # max.k <- max(k)
+    # step <- (log(max.k + 1, 10) - log(min.k, 10)) / (n.bins - 1)
+    # bins <- seq(log(min.k, 10), log(max.k + 1, 10), step)
+    # bin.count <- vector(length = n.bins)
+    # 
+    # counted <- 0
+    # for (i in 1:(n.bins)) {
+    #   count <- sum(log.k >= bins[i] & log.k < bins[i + 1])
+    #   bin.count[i] <- count
+    #   counted <- counted + count
+    # }
+    # bin.count[n.bins] <- length(k) - counted
+    # prob.log.k <- bin.count / sum(bin.count)
     
     
     
