@@ -2,9 +2,9 @@ library(igraph)
 
 # Watts-Strogatz model
 
-N <- 50
+N <- 1000
 k <- 6
-p <- 0
+p <- 0.5
 
 # Fix seed in order to make the results reproducible
 set.seed(20)
