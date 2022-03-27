@@ -1,7 +1,10 @@
 library(igraph)
 
-normalize <- function(x) {
-  return ((x - min(x)) / (max(x) - min(x)))
+MLE.alpha <- function(k) {
+  min.k <- min(k)
+  n <- length(k)
+  aux <- log(k / (min.k - 1 / 2))
+  return(1 + n / sum(aux))
 }
 
 plot.graph <- function(g, net.name) {
