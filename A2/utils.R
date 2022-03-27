@@ -21,7 +21,7 @@ plot.graph <- function(g, net.name) {
   dev.off()
 }
 
-make.ccdf.bins <- function(x, min.bins = 10, max.bins = 30) {
+make.pdf.bins <- function(x, min.bins = 10, max.bins = 30) {
   unique.values <- length(unique(x))
   if (unique.values < min.bins)
     n.bins <- 10
@@ -46,7 +46,12 @@ make.ccdf.bins <- function(x, min.bins = 10, max.bins = 30) {
   bin.count[n.bins] <- length(x) - counted
   prob.log.x <- bin.count / sum(bin.count)
   
-  return(list(bins = bins, ccdf = rev(cumsum(rev(prob.log.x)))))
+  return(list(bins = bins, pdf = prob.log.x))
+}
+
+make.ccdf.bins <- function(x, min.bins = 10, max.bins = 30) {
+  pdf.bins <- make.pdf.bins(x, min.bins, max.bins)  
+  return(list(bins = pdf.bins$bins, ccdf = rev(cumsum(rev(pdf.bins$pdf)))))
 }
 
 plot.hists <- function(g, net.name, log_log = TRUE) {
@@ -105,9 +110,9 @@ plot.hists <- function(g, net.name, log_log = TRUE) {
   dev.off()
   
   if (log_log) {
-    log.bins <- make.log.bins(k)
+    log.bins <- make.pdf.bins(k)
     bins <- log.bins$bins
-    prob.log.k <- log.bins$prob.log
+    prob.log.k <- log.bins$pdf
     # log.k <- log(k, 10)
     # min.k <- min(k)
     # max.k <- max(k)
