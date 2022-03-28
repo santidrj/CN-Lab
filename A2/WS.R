@@ -2,7 +2,7 @@ library(igraph)
 
 # Watts-Strogatz model
 
-N <- 1000
+N <- 10000
 k <- 6
 p <- 0.5
 
@@ -51,5 +51,5 @@ source("utils.R")
 if (N < 1000) {
   plot.graph(g, paste("WS-", N, "-", k, "-", p, sep = ""))
 } else {
-  plot.hists(g, paste("WS-", N, "-", k, "-", p, sep = ""))
+  plot.hists(g, paste("WS-", N, "-", k, "-", p, sep = ""), log.log = FALSE, ws.dist = TRUE, K = k, p = p)
 }

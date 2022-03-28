@@ -215,7 +215,7 @@ plot.loglog.hist <- function(k, plots.path, net.name, xmin = 1, alpha = 3) {
   dev.off()
 }
 
-plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha = 3) {
+plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha = 3,  ws.dist = FALSE, K = NA, p = NA) {
   k <- degree(g)
   unique.degrees <- length(unique(unname(k)))
   if (unique.degrees < 10)
@@ -247,6 +247,10 @@ plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha
   
   if (!is.na(lambda) && !log.log) {
     lines(dpois(0:1000, lambda), col = "blue", yaxt = "n", xaxt = "n")
+  }
+  if (ws.dist) {
+    x <- min(k):max(k)
+    lines(x, WS.dist(x, K, p), col = "blue", yaxt = "n", xaxt = "n")
   }
   
   axis(1)
