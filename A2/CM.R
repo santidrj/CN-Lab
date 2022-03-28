@@ -87,7 +87,7 @@ repeat {
     break
   } else if ((sum(degrees) / 2 >= sum(degrees != 0)) ||
              stall.iter > 10) {
-    print("Undo last changes and try again")
+    print("Undo changes and try again")
     degrees <- aux.degrees
     final.slots <- data.frame()
     free.slots <- data.frame(degrees)
