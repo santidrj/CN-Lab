@@ -13,8 +13,8 @@ WS.dist <- function(degrees, K, p) {
   
   K2 <- K / 2
 
-  if (min(degrees) < k2) {
-    print("Minimum degree must be equal or larger than mean degree divided by two")
+  if (min(degrees) < K2) {
+    print("ERROR: Minimum degree must be equal or larger than mean degree divided by two")
     return(NULL)
   }
   arg.sum <- function(k, n) {
