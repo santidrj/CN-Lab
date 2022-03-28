@@ -141,7 +141,7 @@ make.pdf.bins <- function(x, min.bins = 10, max.bins = 30) {
 }
 
 make.ccdf.bins <- function(x, min.bins = 10, max.bins = 30) {
-  pdf.bins <- make.pdf.bins(x, min.bins, max.bins)  
+  pdf.bins <- make.pdf.bins(x, min.bins, max.bins)
   return(list(bins = pdf.bins$bins, ccdf = rev(cumsum(rev(pdf.bins$pdf)))))
 }
 
@@ -203,7 +203,79 @@ plot.loglog.hist <- function(k, plots.path, net.name, xmin = 1, alpha = 3) {
     ylim = ylim
   )
   par(new = T)
-  plot(log(x), dist, log='y', type = 'l', ylim=ylim, axes = F, ylab = "", xlab = "")
+  plot(log(x), dist, log = "y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
+  axis(1)
+  axis(1, at = aux.seq)
+  axis(2,
+       at = yticks,
+       labels = parse(text = paste("10^", as.integer(log10(
+         yticks
+       )), sep = "")))
+  
+  dev.off()
+}
+
+plot.loglog.hist2 <- function(k, plots.path, net.name, n.bins, xmin = 1, alpha = 3) {
+
+  log.k = seq(from = log10(min(k)), to = log10(max(k)), length.out = n.bins)
+  hist <- hist(k, breaks = 10^log.k)
+  hist$counts <- hist$counts / sum(hist$counts)
+  
+  aux.seq = seq(-1000, 1000, 2000)
+
+  png(file = file.path(plots.path, paste(net.name, "_PDF_log.png",
+                                         sep = "")))
+
+  ylim <- c(1e-6, 1)
+  yticks <- 10 ^ seq(-5L, 1L, 1L)
+  dist <- dpldis(10^log.k, xmin, alpha)
+  
+plot(
+    log.k[1:n.bins - 1],
+    hist$counts,
+    log = 'y',
+    type = 'h',
+    lwd = 10,
+    lend = 2,
+    col = 'gray',
+    main = "PDF",
+    ylab = "P(k)",
+    xlab = "log10(k)",
+    axes = F,
+    #ylim = c(0, max(hist$counts) + 0.05),
+    ylim = ylim
+  )
+  par(new = T)
+  plot(log.k, 50*dist, log="y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
+  axis(1)
+  axis(1, at = aux.seq)
+  axis(2,
+       at = yticks,
+       labels = parse(text = paste("10^", as.integer(log10(
+         yticks
+       )), sep = "")))
+
+  dev.off()
+  
+  png(file = file.path(plots.path, paste(net.name, "_CCDF_log.png", sep = "")))
+  ylim <- c(1e-6, 1)
+  yticks <- 10 ^ seq(-5L, 1L, 1L)
+  plot(
+    log.k[1:n.bins - 1],
+    rev(cumsum(rev(hist$counts))),
+    log = 'y',
+    type = 'h',
+    lwd = 10,
+    lend = 2,
+    col = 'gray',
+    main = "CCDF",
+    ylab = "P(k)",
+    xlab = "log10(k)",
+    axes = F,
+    ylim = ylim
+  )
+  par(new = T)
+  plot(log.k, 50*dist, log = "y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
   axis(1)
   axis(1, at = aux.seq)
   axis(2,
@@ -282,6 +354,7 @@ plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha
   dev.off()
   
   if (log.log)  {
-    plot.loglog.hist(k, plots.path, net.name, xmin, alpha)
+    plot.loglog.hist2(k, plots.path, net.name, xmin, alpha, n.bins = n.bins)
+    #plot.loglog.hist(k, plots.path, net.name, xmin, alpha)
   }
 }
