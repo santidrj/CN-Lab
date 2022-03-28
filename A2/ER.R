@@ -35,7 +35,5 @@ if (N < 1000) {
 } else {
   p = 2 * K / (N*(N-1))
   n.bins <- length(unique(degree(g)))
-  # plot.binomial(N, p, n.bins)
-  plot.poisson(N*p, n.bins)
   plot.hists(g, paste("ER-", N, "-", K, sep = ""), lambda=N*p, log.log=F)
 }

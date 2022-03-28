@@ -246,8 +246,6 @@ plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha
   )
   
   if (!is.na(lambda) && !log.log) {
-    # x <- rpois(1000, lambda)
-    # dp <- function(x, lmd = lambda) dpois(x, lambda = lmd)
     lines(dpois(0:1000, lambda), col = "blue", yaxt = "n", xaxt = "n")
   }
   
