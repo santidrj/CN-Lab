@@ -2,11 +2,11 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 10000
-m <- 5
+N <- 100
+m <- 1
 
-# Fix seed in order to make the results reproducible
-set.seed(20)
+# Fix seed in order to make the results of N >= 1000 reproducible
+# set.seed(20)
 
 if (N < 5) {
   g <- make_empty_graph(directed = F) + vertices(1:N) + path(1:N, 1)

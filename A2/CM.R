@@ -3,14 +3,14 @@ library(fgpt)
 library(dplyr)
 library(poweRlaw)
 
-N <- 10000
-k <- 5              # parameter in Poisson distribution
-alpha <- 3          # parameter power-law distributions
+N <- 100
+k <- 4              # parameter in Poisson distribution
+alpha <- 3.5          # parameter power-law distributions
 xmin <- 1
-P <- "power-law"
+P <- "poisson"
 
-# Fix seed in order to make the results reproducible
-set.seed(10)
+# Fix seed in order to make the results of N >= 1000 reproducible
+# set.seed(10)
 
 sample_dist <- function(dist_name) {
   if (dist_name == "poisson") {
@@ -87,7 +87,7 @@ repeat {
     break
   } else if ((sum(degrees) / 2 >= sum(degrees != 0)) ||
              stall.iter > 10) {
-    print("Undo last changes and try again")
+    print("Undo changes and try again")
     degrees <- aux.degrees
     final.slots <- data.frame()
     free.slots <- data.frame(degrees)
