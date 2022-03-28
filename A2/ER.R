@@ -3,11 +3,11 @@ library(dplyr)
 
 # Erdős-Rényi model
 
-N <- 10000
-K <- 20000
+N <- 50
+K <- 150
 
-# Fix seed in order to make the results reproducible
-set.seed(20)
+# Fix seed in order to make the results of N >= 1000 reproducible
+# set.seed(20)
 
 stopifnot(K <= N*(N-1)/2)
 

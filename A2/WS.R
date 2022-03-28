@@ -2,12 +2,12 @@ library(igraph)
 
 # Watts-Strogatz model
 
-N <- 10000
-k <- 6
-p <- 0.5
+N <- 50
+k <- 2
+p <- 1.0
 
-# Fix seed in order to make the results reproducible
-set.seed(20)
+# Fix seed in order to make the results of N >= 1000 reproducible
+# set.seed(20)
 
 stopifnot((k %% 2) == 0)
 stopifnot(k <= 20)
