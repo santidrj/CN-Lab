@@ -153,42 +153,51 @@ file.name <- paste("CM-", fn, sep = "")
 if (N < 1000) {
   plot.graph(g, file.name)
 } else {
-  plot.hists(g, file.name, lambda = k, log.log = (P == "power-law"), xmin = xmin, alpha = alpha)
+  plot.hists(
+    g,
+    file.name,
+    lambda = k,
+    log.log = (P == "power-law"),
+    xmin = xmin,
+    alpha = alpha
+  )
   if (P == "power-law") {
     pdf.log.bins <- make.pdf.bins(degree(g))
     pdf.log.bins$pdf[pdf.log.bins$pdf != 0] <-
       log10(pdf.log.bins$pdf[pdf.log.bins$pdf != 0])
     lr <- lm(pdf.log.bins$pdf ~ pdf.log.bins$bins)
     pdf.alpha <- 1 - lr$coefficient[2]
-    s1 <- sprintf("Alpha computed manually using the PDF: %f", pdf.alpha)
+    s1 <-
+      sprintf("Alpha computed manually using the PDF: %f", pdf.alpha)
     
     log.bins <- make.ccdf.bins(degree(g))
     log.bins$ccdf[log.bins$ccdf != 0] <-
       log10(log.bins$ccdf[log.bins$ccdf != 0])
     lr <- lm(log.bins$ccdf ~ log.bins$bins)
     alpha <- 1 - lr$coefficient[2]
-    s2 <- sprintf("Alpha computed manually using the CCDF: %f", alpha)
+    s2 <-
+      sprintf("Alpha computed manually using the CCDF: %f", alpha)
     
     
     s3 <-
       sprintf("Alpha using igraph: %f", power.law.fit(degree(g))$alpha)
     
-  s4 <-
-    sprintf("Alpha using MLE: %f", MLE.alpha(degree(g)))
-  
-  dir.create("results", showWarnings = F)
-  writeLines(s1, file.path("results", paste(file.name, ".txt", sep = "")))
-  write(s2,
-        file.path("results", paste(file.name, ".txt", sep = "")),
-        append = T,
-        sep = "\n")
-  write(s3,
-        file.path("results", paste(file.name, ".txt", sep = "")),
-        append = T,
-        sep = "\n")
-  write(s4,
-        file.path("results", paste(file.name, ".txt", sep = "")),
-        append = T,
-        sep = "\n")
+    s4 <-
+      sprintf("Alpha using MLE: %f", MLE.alpha(degree(g)))
+    
+    dir.create("results", showWarnings = F)
+    writeLines(s1, file.path("results", paste(file.name, ".txt", sep = "")))
+    write(s2,
+          file.path("results", paste(file.name, ".txt", sep = "")),
+          append = T,
+          sep = "\n")
+    write(s3,
+          file.path("results", paste(file.name, ".txt", sep = "")),
+          append = T,
+          sep = "\n")
+    write(s4,
+          file.path("results", paste(file.name, ".txt", sep = "")),
+          append = T,
+          sep = "\n")
   }
 }

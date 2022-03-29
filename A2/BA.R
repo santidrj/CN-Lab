@@ -6,7 +6,7 @@ N <- 1000
 m_0 <- 5
 m <- 5
 
-stopifnot( m <= m_0)
+stopifnot(m <= m_0)
 
 # Fix seed in order to make the results of N >= 1000 reproducible
 # set.seed(20)
@@ -33,7 +33,6 @@ file.name <- paste("BA-", N, "-", m, sep = "")
 if (N < 1000) {
   plot.graph(g, file.name)
 } else {
-  # plot.power.law(1, 3)
   plot.hists(g, file.name, xmin = m)
   
   pdf.log.bins <- make.pdf.bins(degree(g))
