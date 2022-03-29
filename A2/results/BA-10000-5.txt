@@ -1,4 +1,4 @@
-Alpha computed manually using the PDF: 2.464059
-Alpha computed manually using the CCDF: 2.619012
-Alpha using igraph: 2.919853
-Alpha using MLE: 2.732598
+Alpha computed manually using the PDF: 2.128554
+Alpha computed manually using the CCDF: 2.593034
+Alpha using igraph: 2.923534
+Alpha using MLE: 2.733247
