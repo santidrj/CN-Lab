@@ -2,13 +2,13 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 100
+N <- 1000
 m <- 5
 
 if (N < 5) {
-  g <- make_empty_graph(directed = F) + vertices(1:N) + path(1:N, 1)
+  g <- make_full_graph(N, directed = F)
 } else {
-  g <- make_empty_graph(directed = F) + vertices(1:5) + path(1:5, 1)
+  g <- make_full_graph(5, directed = F)
   for (i in 6:(N - 5)) {
     k <- degree(g)
     v <- V(g)
