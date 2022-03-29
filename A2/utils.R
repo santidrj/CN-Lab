@@ -1,6 +1,5 @@
 library(igraph)
 library(poweRlaw)
-library(ggplot2)
 
 MLE.alpha <- function(k) {
   min.k <- min(k)

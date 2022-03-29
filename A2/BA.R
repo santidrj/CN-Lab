@@ -3,16 +3,19 @@ library(igraph)
 # Barabási & Albert model
 
 N <- 1000
+m_0 <- 5
 m <- 5
+
+stopifnot( m <= m_0)
 
 # Fix seed in order to make the results of N >= 1000 reproducible
 # set.seed(20)
 
-if (N < 5) {
+if (N < m_0) {
   g <- make_full_graph(N, directed = F)
 } else {
-  g <- make_full_graph(5, directed = F)
-  for (i in 6:(N - 5)) {
+  g <- make_full_graph(m_0, directed = F)
+  for (i in (m_0 + 1):N) {
     k <- degree(g)
     v <- V(g)
     selection <- sample(v, m, replace = F, prob = k / sum(k))
