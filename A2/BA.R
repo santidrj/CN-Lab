@@ -2,8 +2,8 @@ library(igraph)
 
 # Barabási & Albert model
 
-N <- 100
-m <- 1
+N <- 1000
+m <- 5
 
 # Fix seed in order to make the results of N >= 1000 reproducible
 # set.seed(20)
@@ -31,7 +31,7 @@ if (N < 1000) {
   plot.graph(g, file.name)
 } else {
   # plot.power.law(1, 3)
-  plot.hists(g, file.name)
+  plot.hists(g, file.name, xmin = m)
   
   pdf.log.bins <- make.pdf.bins(degree(g))
   pdf.log.bins$pdf[pdf.log.bins$pdf != 0] <-

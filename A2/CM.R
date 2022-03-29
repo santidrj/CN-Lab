@@ -3,9 +3,9 @@ library(fgpt)
 library(dplyr)
 library(poweRlaw)
 
-N <- 100
+N <- 1000
 k <- 4              # parameter in Poisson distribution
-alpha <- 3.5          # parameter power-law distributions
+alpha <- 3          # parameter power-law distributions
 xmin <- 1
 P <- "poisson"
 

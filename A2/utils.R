@@ -246,7 +246,7 @@ plot(
     ylim = ylim
   )
   par(new = T)
-  plot(log.k, 50*dist, log="y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
+  plot(log.k, dist, log="y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
   axis(1)
   axis(1, at = aux.seq)
   axis(2,
@@ -275,7 +275,7 @@ plot(
     ylim = ylim
   )
   par(new = T)
-  plot(log.k, 50*dist, log = "y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
+  plot(log.k, dist, log = "y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
   axis(1)
   axis(1, at = aux.seq)
   axis(2,
@@ -354,7 +354,7 @@ plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha
   dev.off()
   
   if (log.log)  {
-    plot.loglog.hist2(k, plots.path, net.name, xmin, alpha, n.bins = n.bins)
-    #plot.loglog.hist(k, plots.path, net.name, xmin, alpha)
+    plot.loglog.hist2(k, plots.path, net.name,  n.bins, xmin, alpha)
+    #plot.loglog.hist(k, plots.path, net.name, C, alpha)
   }
 }
