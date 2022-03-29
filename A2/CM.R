@@ -3,7 +3,7 @@ library(fgpt)
 library(dplyr)
 library(poweRlaw)
 
-N <- 10000
+N <- 1000
 k <- 4              # parameter in Poisson distribution
 alpha <- 3          # parameter power-law distributions
 xmin <- 1
@@ -158,8 +158,6 @@ if (N < 1000) {
     file.name,
     lambda = k,
     log.log = (P == "power-law"),
-    xmin = xmin,
-    alpha = alpha
   )
   if (P == "power-law") {
     pdf.log.bins <- make.pdf.bins(degree(g))

@@ -33,7 +33,7 @@ file.name <- paste("BA-", N, "-", m, sep = "")
 if (N < 1000) {
   plot.graph(g, file.name)
 } else {
-  plot.hists(g, file.name, xmin = m)
+  plot.hists(g, file.name, log.log = T)
   
   pdf.log.bins <- make.pdf.bins(degree(g))
   pdf.log.bins$pdf[pdf.log.bins$pdf != 0] <-
