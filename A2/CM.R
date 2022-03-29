@@ -139,6 +139,7 @@ while (length(components) > 1) {
   components <- decompose(g)
 }
 
+sprintf("Average degree of G: %d", ceiling(mean(degree(g))))
 stopifnot(mean(degree(g)) <= 20)
 
 if (P == "poisson") {
