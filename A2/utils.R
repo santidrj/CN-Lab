@@ -216,8 +216,13 @@ plot.loglog.hist <- function(k, plots.path, net.name, xmin = 1, alpha = 3) {
 }
 
 plot.loglog.hist2 <- function(k, plots.path, net.name, n.bins, xmin = 1, alpha = 3) {
-
-  log.k = seq(from = log10(min(k)), to = log10(max(k)), length.out = n.bins)
+  write(k,
+    file.path("results", paste("k-BA-1000-5.txt", sep = "")),
+    append = T,
+    sep = "\n"
+  )
+  
+  log.k <- seq(from = log10(min(k)), to = log10(max(k)), length.out = n.bins)
   hist <- hist(k, breaks = 10^log.k)
   hist$counts <- hist$counts / sum(hist$counts)
   
@@ -231,9 +236,9 @@ plot.loglog.hist2 <- function(k, plots.path, net.name, n.bins, xmin = 1, alpha =
   dist <- dpldis(10^log.k, xmin, alpha)
   
 plot(
-    log.k[1:n.bins - 1],
+    hist$breaks[1:n.bins - 1],
     hist$counts,
-    log = 'y',
+    log = 'xy',
     type = 'h',
     lwd = 10,
     lend = 2,
@@ -274,8 +279,8 @@ plot(
     axes = F,
     ylim = ylim
   )
-  par(new = T)
-  plot(log.k, dist, log = "y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
+  #par(new = T)
+  #plot(log.k, rev(cumsum(rev(dist))), log = "y", type = "l", ylim = ylim, axes = F, ylab = "", xlab = "")
   axis(1)
   axis(1, at = aux.seq)
   axis(2,
@@ -286,6 +291,7 @@ plot(
   
   dev.off()
 }
+
 
 plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha = 3,  ws.dist = FALSE, K = NA, p = NA) {
   k <- degree(g)
@@ -354,7 +360,12 @@ plot.hists <- function(g, net.name, lambda = NA, log.log = TRUE, xmin = 1, alpha
   dev.off()
   
   if (log.log)  {
-    plot.loglog.hist2(k, plots.path, net.name,  n.bins, xmin, alpha)
+    write(k,
+    file.path("degrees", paste(net.name, ".txt", sep = "")),
+    append = T,
+    sep = "\n"
+  )
+    #plot.loglog.hist2(k, plots.path, net.name,  n.bins, xmin, alpha)
     #plot.loglog.hist(k, plots.path, net.name, C, alpha)
   }
 }

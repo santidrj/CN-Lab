@@ -3,11 +3,11 @@ library(fgpt)
 library(dplyr)
 library(poweRlaw)
 
-N <- 1000
+N <- 10000
 k <- 4              # parameter in Poisson distribution
 alpha <- 3          # parameter power-law distributions
 xmin <- 1
-P <- "poisson"
+P <- "power-law"
 
 # Fix seed in order to make the results of N >= 1000 reproducible
 # set.seed(10)
