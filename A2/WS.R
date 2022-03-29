@@ -3,8 +3,11 @@ library(igraph)
 # Watts-Strogatz model
 
 N <- 50
-k <- 6
-p <- 0
+k <- 2
+p <- 1.0
+
+# Fix seed in order to make the results of N >= 1000 reproducible
+# set.seed(20)
 
 stopifnot((k %% 2) == 0)
 stopifnot(k <= 20)
@@ -48,5 +51,5 @@ source("utils.R")
 if (N < 1000) {
   plot.graph(g, paste("WS-", N, "-", k, "-", p, sep = ""))
 } else {
-  plot.hists(g, paste("WS-", N, "-", k, "-", p, sep = ""))
+  plot.hists(g, paste("WS-", N, "-", k, "-", p, sep = ""), log.log = FALSE, ws.dist = TRUE, K = k, p = p)
 }

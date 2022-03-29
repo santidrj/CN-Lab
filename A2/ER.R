@@ -3,8 +3,11 @@ library(dplyr)
 
 # Erdős-Rényi model
 
-N <- 1000
-K <- 2000
+N <- 50
+K <- 150
+
+# Fix seed in order to make the results of N >= 1000 reproducible
+# set.seed(20)
 
 stopifnot(K <= N*(N-1)/2)
 
@@ -31,7 +34,6 @@ if (N < 1000) {
   plot.graph(g, paste("ER-", N, "-", K, sep = ""))
 } else {
   p = 2 * K / (N*(N-1))
-  plot.binomial(N, p)
-  plot.poisson(N*p)
-  plot.hists(g, paste("ER-", N, "-", K, sep = ""), F)
+  n.bins <- length(unique(degree(g)))
+  plot.hists(g, paste("ER-", N, "-", K, sep = ""), lambda=N*p, log.log=F)
 }
