@@ -205,6 +205,7 @@ plot.hists <-
     dev.off()
     
     if (log.log)  {
+      dir.create("degrees", showWarnings = F)
       write(k,
             file.path("degrees", paste(net.name, ".txt", sep = "")),
             append = T,
