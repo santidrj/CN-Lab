@@ -3,14 +3,14 @@ library(fgpt)
 library(dplyr)
 library(poweRlaw)
 
-N <- 1000
+N <- 100
 k <- 4              # parameter in Poisson distribution
 alpha <- 3          # parameter power-law distributions
 xmin <- 1
-P <- "power-law"
+P <- "poisson"
 
 # Fix seed in order to make the results of N >= 1000 reproducible
-# set.seed(10)
+set.seed(39)
 
 sample_dist <- function(dist_name) {
   if (dist_name == "poisson") {
@@ -198,4 +198,9 @@ if (N < 1000) {
           append = T,
           sep = "\n")
   }
+}
+
+if (N <= 1000) {
+  dir.create("networks", showWarnings = F)
+  write.graph(g, file.path("networks", paste(file.name, ".net", sep = "")), format = "pajek")
 }

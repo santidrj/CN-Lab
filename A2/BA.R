@@ -9,7 +9,7 @@ m <- 5
 stopifnot(m <= m_0)
 
 # Fix seed in order to make the results of N >= 1000 reproducible
-# set.seed(20)
+set.seed(20)
 
 if (N < m_0) {
   g <- make_full_graph(N, directed = F)
@@ -72,4 +72,9 @@ if (N < 1000) {
         file.path("results", paste(file.name, ".txt", sep = "")),
         append = T,
         sep = "\n")
+}
+
+if (N <= 1000) {
+  dir.create("networks", showWarnings = F)
+  write.graph(g, file.path("networks", paste(file.name, ".net", sep = "")), format = "pajek")
 }
