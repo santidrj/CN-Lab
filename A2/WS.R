@@ -2,12 +2,12 @@ library(igraph)
 
 # Watts-Strogatz model
 
-N <- 50
-k <- 2
-p <- 1.0
+N <- 1000
+k <- 6
+p <- 0.5
 
 # Fix seed in order to make the results of N >= 1000 reproducible
-# set.seed(20)
+set.seed(20)
 
 stopifnot((k %% 2) == 0)
 stopifnot(k <= 20)
@@ -48,15 +48,21 @@ if (p > 0) {
 stopifnot(mean(degree(g)) <= 20)
 
 source("utils.R")
+file.name <- paste("WS-", N, "-", k, "-", p, sep = "")
 if (N < 1000) {
-  plot.graph(g, paste("WS-", N, "-", k, "-", p, sep = ""))
+  plot.graph(g, file.name)
 } else {
   plot.hists(
     g,
-    paste("WS-", N, "-", k, "-", p, sep = ""),
+    file.name,
     log.log = FALSE,
     ws.dist = TRUE,
     K = k,
     p = p
   )
+}
+
+if (N <= 1000) {
+  dir.create("networks", showWarnings = F)
+  write.graph(g, file.path("networks", paste(file.name, ".net", sep = "")), format = "pajek")
 }

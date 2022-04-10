@@ -4,10 +4,10 @@ library(dplyr)
 # Erdős-Rényi model
 
 N <- 50
-K <- 150
+K <- 200
 
 # Fix seed in order to make the results of N >= 1000 reproducible
-# set.seed(20)
+set.seed(20)
 
 stopifnot(K <= N * (N - 1) / 2)
 
@@ -37,13 +37,19 @@ sprintf("Average degree of G: %d", ceiling(mean(degree(g))))
 stopifnot(mean(degree(g)) <= 20)
 
 source("utils.R")
+file.name <- paste("ER-", N, "-", K, sep = "")
 if (N < 1000) {
-  plot.graph(g, paste("ER-", N, "-", K, sep = ""))
+  plot.graph(g, file.name)
 } else {
   p = 2 * K / (N * (N - 1))
   n.bins <- length(unique(degree(g)))
   plot.hists(g,
-             paste("ER-", N, "-", K, sep = ""),
+             file.name,
              lambda = N * p,
              log.log = F)
+}
+
+if (N <= 1000) {
+  dir.create("networks", showWarnings = F)
+  write.graph(g, file.path("networks", paste(file.name, ".net", sep = "")), format = "pajek")
 }
