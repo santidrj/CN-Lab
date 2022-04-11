@@ -79,25 +79,25 @@ for (f in list.files(file.path("A3-networks"),
                   quiet = T)
       ref.modularity <- modularity(g, ref+1)
       cat(sprintf("Reference modularity: %f\n", ref.modularity))
-      ji <- jaccard(g.membership, ref)
-      nmi <-
-        NMI(as.vector(g.membership), as.vector(ref), variant = "sum")
-      nvi <- NVI(as.vector(g.membership), as.vector(ref))
-      if (ji == 1) {
-        nmi <- if (!is.na(nmi))
-          nmi
-        else
-          1
-        nvi <- if (!is.na(nvi))
-          nvi
-        else
-          1
-      }
-      s2 <- sprintf("Jaccard index: %f", ji)
-      s3 <- sprintf("Normalized Mutual of Information: %f", nmi)
-      s4 <- sprintf("Normalized Variation of Information: %f", nvi)
-      cat(paste(s2, s3, s4, sep = "\n"))
-      cat("\n")
+      # ji <- jaccard(g.membership, ref)
+      # nmi <-
+      #   NMI(as.vector(g.membership), as.vector(ref), variant = "sum")
+      # nvi <- NVI(as.vector(g.membership), as.vector(ref))
+      # if (ji == 1) {
+      #   nmi <- if (!is.na(nmi))
+      #     nmi
+      #   else
+      #     1
+      #   nvi <- if (!is.na(nvi))
+      #     nvi
+      #   else
+      #     1
+      # }
+      # s2 <- sprintf("Jaccard index: %f", ji)
+      # s3 <- sprintf("Normalized Mutual of Information: %f", nmi)
+      # s4 <- sprintf("Normalized Variation of Information: %f", nvi)
+      # cat(paste(s2, s3, s4, sep = "\n"))
+      # cat("\n")
       
       # TODO: Save measures to a latex table
       # TODO: Save modularity comparison to a latex table
