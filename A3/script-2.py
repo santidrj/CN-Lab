@@ -75,7 +75,7 @@ for root, dirs, files in os.walk("A3-networks"):
         net_name, ext = file.split(".")
         if ext == "net":
             print(f"Network: {net_name}")
-            G = nx.read_pajek(os.path.join(root, file))
+            G = read_pajek(os.path.join(root, file))
             com = nx_comm.centrality.girvan_newman(G)
             out_file = net_name + "_" + algorithm
 
