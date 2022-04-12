@@ -94,7 +94,7 @@ for (f in list.files(file.path("A3-networks"),
         lc <- cluster_infomap(g)
       }
       g.modularity <- round(modularity(lc), digits = 3)
-      cat(sprintf("Modularity %s: %.3f\n", algorithm, g.modularity))
+      cat(sprintf("%s modularity: %.3f\n", toTitleCase(algorithm), g.modularity))
       g.membership <- membership(lc)
       
       out.file <-
