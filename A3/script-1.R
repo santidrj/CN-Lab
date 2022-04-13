@@ -53,7 +53,7 @@ for (f in list.files(file.path("A3-networks"),
         quiet = T
       )
       ref.modularity <- round(modularity(g, ref + 1), digits = 3)
-      aux.df[nrow(aux.df) + 1, ] <-
+      aux.df[nrow(aux.df) + 1,] <-
         c(modularity.file, ref.modularity)
       df <- data.frame(matrix(nrow = 0, ncol = 3))
       colnames(df) <-
@@ -71,7 +71,7 @@ for (f in list.files(file.path("A3-networks"),
     }
     
     if (is.character(ref.modularity)) {
-      aux.df[nrow(aux.df) + 1, ] <- c(net.name, "-")
+      aux.df[nrow(aux.df) + 1,] <- c(net.name, "-")
     }
     
     
@@ -96,19 +96,23 @@ for (f in list.files(file.path("A3-networks"),
       png(file.path("figures", paste(out.file, ".png", sep = "")))
       if (all(c("x", "y") %in% vertex_attr_names(g))) {
         g$layout <- cbind(V(g)$x, V(g)$y)
-        plot(lc,
-             delete_vertex_attr(g, "name"),
-             vertex.label = NA,
-             vertex.size = 5,
-             edge.label = NA,
-             edge.arrow.size = .2)
+        plot(
+          lc,
+          g,
+          vertex.label = NA,
+          vertex.size = 5,
+          edge.label = NA,
+          edge.arrow.size = .1,
+        )
       } else {
         plot(
           lc,
           g,
           layout = layout_with_kk,
+          vertex.label = NA,
           vertex.size = 5,
-          edge.arrow.size = .2
+          edge.label = NA,
+          edge.arrow.size = .1,
         )
       }
       dev.off()
