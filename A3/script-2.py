@@ -7,7 +7,7 @@ import networkx.algorithms.community as nx_comm
 from networkx.readwrite.pajek import read_pajek
 
 algorithm = "girvan-newman"
-N_COM = 10                  # Default number of communities
+N_COM = 10  # Default number of communities
 
 
 def get_reference(file):
@@ -21,6 +21,7 @@ def get_reference(file):
     else:
         ref = file.replace(".net", ".clu")
     return ref
+
 
 # def to_pajek_com(communities, N):
 #     df = pd.DataFrame(index=range(N), columns=[f"*Vertices {N}"])
@@ -47,7 +48,7 @@ def nx_com_to_pajek_file(G, filepath):
     f = open(filepath, "w")
     f.writelines(f"*Vertices {N}\n")
     for node in G.nodes():
-        f.writelines(str(G.nodes[node]['community'])+"\n")
+        f.writelines(str(G.nodes[node]['community']) + "\n")
     f.close()
 
 
@@ -77,40 +78,63 @@ for root, dirs, files in os.walk("A3-networks"):
             print(f"Network: {net_name}")
             G = read_pajek(os.path.join(root, file))
             com = nx_comm.centrality.girvan_newman(G)
-            out_file = net_name + "_" + algorithm
 
             # Modularity
             ref_file = get_reference(os.path.join(root, file))
-            if os.path.exists(ref_file):
-                ref_mod = nx_comm.modularity(G, pajek_file_to_nx_com(ref_file))
-                ref_mod = round(ref_mod, 3)
-                n_com = get_number_com(ref_file)
+            ref_name, ref_ext = os.path.basename(ref_file).split(".")
+            ref_files = [filename for filename in os.listdir(root)
+                         if filename.startswith(ref_name) and filename.endswith(ext)]
+
+            if not ref_files:
+                ref_mod_list = ["-"]
+                n_com_list = [N_COM]
             else:
-                ref_mod = "-"
-                n_com = N_COM
-            print(f"Reference modularity: {ref_mod}")
+                for ref_file in ref_files:
+                    ref_name, ref_ext = os.path.basename(ref_file).split(".")
+                    save_name = net_name if len(ref_files) == 1 else ref_name
+                    out_file = save_name + "_" + algorithm
 
-            G, com_list = set_node_community(G, com, n_com)
-            mod = nx_comm.modularity(G, com_list)
-            mod = round(mod, 3)
-            print(f"{algorithm.title()} modularity: {mod}")
+                    ref_mod = nx_comm.modularity(G, pajek_file_to_nx_com(ref_file))
+                    ref_mod = round(ref_mod, 3)
+                    n_com = get_number_com(ref_file)
 
-            mod_file = os.path.join("results", net_name+"_modularity.csv")
+                    print(f"Reference modularity {ref_name}: {ref_mod}")
 
-            with open(mod_file, 'r+') as f:
-                lines = f.readlines()
-                f.seek(0)
-                f.truncate()
-                f.writelines(lines[:3])
-                f.writelines(f"{algorithm.title()},{mod},{ref_mod}")
+                    G, com_list = set_node_community(G, com, n_com)
+                    mod = nx_comm.modularity(G, com_list)
+                    mod = round(mod, 3)
+                    print(f"{algorithm.title()} modularity: {mod}")
 
-            # Partition
-            nx_com_to_pajek_file(G, os.path.join("nets", out_file + ".clu"))
-            
-            # Plot
-            print("\n")
+                    mod_file = os.path.join("results", save_name + "_modularity.csv")
 
+                    with open(mod_file, 'r+') as f:
+                        lines = f.readlines()
+                        f.seek(0)
+                        f.truncate()
+                        f.writelines(lines[:3])
+                        f.writelines(f"{algorithm.title()},{mod},{ref_mod}")
 
+                    # Partition
+                    nx_com_to_pajek_file(G, os.path.join("nets", out_file + ".clu"))
+
+                    # Plot
+                    x = nx.get_node_attributes(G, 'x').values()
+                    y = nx.get_node_attributes(G, 'y').values()
+                    if x and y:
+                        nodes = list(G.nodes())
+                        pos = dict(zip(nodes, tuple(zip(x, y))))
+                    else:
+                        pos = nx.kamada_kawai_layout(G)
+                    colors = list(nx.get_node_attributes(G, 'community').values())
+                    nx.draw(G,
+                            pos=pos,
+                            node_size=50,
+                            with_labels=False,
+                            node_color=colors,
+                            cmap=plt.cm.hsv
+                            )
+                    plt.savefig(os.path.join("figures", out_file + ".png"))
+                    print("\n")
 
 """
 G = nx.karate_club_graph()

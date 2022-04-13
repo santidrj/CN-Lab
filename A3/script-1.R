@@ -105,16 +105,15 @@ for (f in list.files(file.path("A3-networks"),
         #cat("The network has coordinates\n")
         g$layout <- cbind(V(g)$x, V(g)$y)
         plot(lc,
-            g,
-            vertex.size = 5,
-            edge.arrow.size = .2)
+          g,
+          vertex.size = 5.
+        )
       } else {
         plot(
           lc,
           g,
           layout = layout_with_kk,
-          vertex.size = 5,
-          edge.arrow.size = .2
+          vertex.size = 5
         )
       }
       dev.off()
