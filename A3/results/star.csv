@@ -1,0 +1,3 @@
+Partition1,Jaccard_Index,Normalized_Mutual_Information_Index_(arithmetic),Normalized_Variation_Of_Information_Metric
+nets/star_infomap.clu,1.0000,1.0000,0.0000
+nets/star_louvain.clu,1.0000,1.0000,0.0000
