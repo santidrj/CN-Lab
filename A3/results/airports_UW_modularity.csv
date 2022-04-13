@@ -1,3 +1,28 @@
-Partition,Modularity,Reference Modularity
+Louvain,0.647,-
+<<<<<<< HEAD
+Infomap,0.604,-
+=======
+Infomap,0.603,-
+Louvain,0.647,-
+Infomap,0.602,-
+Louvain,0.647,-
+Infomap,0.602,-
+Louvain,0.647,-
+Infomap,0.602,-
+Louvain,0.647,-
+Infomap,0.607,-
 Louvain,0.647,-
 Infomap,0.604,-
+Louvain,0.647,-
+Infomap,0.604,-
+Louvain,0.647,-
+Infomap,0.604,-
+Louvain,0.647,-
+Infomap,0.607,-
+Louvain,0.647,-
+Infomap,0.607,-
+Louvain,0.647,-
+Infomap,0.603,-
+Louvain,0.647,-
+Infomap,0.603,-
+>>>>>>> 013058540314a6e808d308bf8b68c4a49ef63ace

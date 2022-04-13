@@ -1,0 +1,8 @@
+Partition,Modularity,Reference Modularity
+<<<<<<< HEAD:A3/results/rb125_modularity.csv
+Louvain,0.617,-
+Infomap,0.501,-
+=======
+Louvain,0.617,0.609
+Infomap,0.529,0.609
+>>>>>>> 013058540314a6e808d308bf8b68c4a49ef63ace:A3/results/rb125-1_modularity.csv
