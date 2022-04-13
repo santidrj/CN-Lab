@@ -1,4 +1,0 @@
-Partition1,Jaccard_Index,Normalized_Mutual_Information_Index_(arithmetic),Normalized_Variation_Of_Information_Metric
-nets/rb125_girvan-newman.clu,0.1655,0.7375,0.2789
-nets/rb125_infomap.clu,0.8647,0.9743,0.0345
-nets/rb125_louvain.clu,0.2659,0.8089,0.2152
