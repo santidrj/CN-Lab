@@ -97,8 +97,10 @@ for (f in list.files(file.path("A3-networks"),
       if (all(c("x", "y") %in% vertex_attr_names(g))) {
         g$layout <- cbind(V(g)$x, V(g)$y)
         plot(lc,
-             g,
+             delete_vertex_attr(g, "name"),
+             vertex.label = NA,
              vertex.size = 5,
+             edge.label = NA,
              edge.arrow.size = .2)
       } else {
         plot(
