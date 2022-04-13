@@ -5,9 +5,9 @@ import numpy as np
 import networkx as nx
 import networkx.algorithms.community as nx_comm
 from networkx.readwrite.pajek import read_pajek
+import time
 
 algorithm = "girvan-newman"
-N_COM = 10  # Default number of communities
 
 
 def get_reference(file):
@@ -33,10 +33,21 @@ def get_reference(file):
 #     return df
 
 
-def set_node_community(G, communities, n_com):
-    limited = itertools.takewhile(lambda c: len(c) <= n_com, communities)
-    for communities in limited:
-        com_list = list(sorted(c) for c in communities)
+def set_node_community(G, communities, n_com=None, n_com_max=50):
+    if n_com:
+        limited = itertools.takewhile(lambda c: len(c) <= n_com, communities)
+        for communities in limited:
+            com_list = list(sorted(c) for c in communities)
+    else:
+        limited = itertools.takewhile(lambda c: len(c) <= n_com_max, communities)
+        best_mod = 0
+        for communities in limited:
+            test_com = list(sorted(c) for c in communities)
+            test_mod = nx_comm.modularity(G, test_com)
+            if test_mod > best_mod:
+                best_mod = test_mod
+                com_list = test_com
+
     for c, com in enumerate(com_list):
         for v in com:
             G.nodes[v]["community"] = c + 1
@@ -96,7 +107,7 @@ for root, dirs, files in os.walk("A3-networks"):
                     n_com = get_number_com(ref_file)
                 else:
                     ref_mod = "-"
-                    n_com = N_COM
+                    n_com = None
 
                 print(f"Reference modularity ({ref_name}): {ref_mod}")
 
