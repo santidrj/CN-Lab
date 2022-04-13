@@ -35,9 +35,8 @@ def get_reference(file):
 
 def set_node_community(G, communities, n_com=None, n_com_max=50):
     if n_com:
-        limited = itertools.takewhile(lambda c: len(c) <= n_com, communities)
-        for communities in limited:
-            com_list = list(sorted(c) for c in communities)
+        comm = next(itertools.islice(communities, n_com - 2, n_com - 1))
+        com_list = list(sorted(c) for c in comm)
     else:
         limited = itertools.takewhile(lambda c: len(c) <= n_com_max, communities)
         best_mod = 0

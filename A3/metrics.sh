@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 files="A3-networks/**/*.clu"
 tmpfile="temporari.csv"
@@ -18,7 +18,6 @@ for f in $files; do
         fi
 
         ./Compare_partitions $partition $f $tmpfile t
-        # tr '\t' ',' < $tmpfile | awk -F',' '{print $11 $16 $26}'> $outfile
         if [ "$first" = true ]; then
             cut -f 1,11,16,26 $tmpfile | tr '\t' ',' > $outfile
             first=false
