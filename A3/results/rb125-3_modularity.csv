@@ -1,3 +1,4 @@
 Partition,Modularity,Reference Modularity
 Louvain,0.617,0.568
 Infomap,0.529,0.568
+Girvan-Newman,0.568,0.568
