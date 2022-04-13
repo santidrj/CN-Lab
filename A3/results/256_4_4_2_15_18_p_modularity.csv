@@ -2,6 +2,7 @@ Partition,Modularity,Reference Modularity
 Louvain,0.782,0.782
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 Infomap,0.051,0.782
 =======
 Infomap,0.053,0.782
@@ -9,3 +10,6 @@ Infomap,0.053,0.782
 =======
 Infomap,0.053,0.782
 >>>>>>> 013058540314a6e808d308bf8b68c4a49ef63ace
+=======
+Infomap,0.053,0.782
+>>>>>>> origin/main
