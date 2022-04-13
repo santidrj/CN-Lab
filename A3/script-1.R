@@ -71,6 +71,19 @@ for (f in list.files(file.path("A3-networks"),
     }
     
     if (is.character(ref.modularity)) {
+      df <- data.frame(matrix(nrow = 0, ncol = 3))
+      colnames(df) <-
+        c("Partition", "Modularity", "Reference Modularity")
+      write.table(
+        df,
+        file = file.path(
+          "results",
+          paste(modularity.file, "_modularity", ".csv", sep = "")
+        ),
+        sep = ",",
+        quote = F,
+        row.names = F
+      )
       aux.df[nrow(aux.df) + 1,] <- c(net.name, "-")
     }
     
@@ -102,7 +115,7 @@ for (f in list.files(file.path("A3-networks"),
           vertex.label = NA,
           vertex.size = 5,
           edge.label = NA,
-          edge.arrow.size = .1,
+          edge.width = .01,
         )
       } else {
         plot(
@@ -129,6 +142,7 @@ for (f in list.files(file.path("A3-networks"),
         out <- aux.df[row, "File"]
         ref.modularity <- aux.df[row, "Modularity"]
         
+        cat("Reference modularity:", ref.modularity,"\n")
         df <-
           data.frame(toTitleCase(algorithm), g.modularity, ref.modularity)
         write.table(
