@@ -92,7 +92,7 @@ for root, dirs, files in os.walk("A3-networks"):
                 if ref_file:
                     ref_name, ref_ext = os.path.basename(ref_file).split(".")
                     ref_mod = nx_comm.modularity(G, pajek_file_to_nx_com(ref_file))
-                    ref_mod = round(ref_mod, 3)
+                    ref_mod = round(ref_mod, 4)
                     n_com = get_number_com(ref_file)
                 else:
                     ref_mod = "-"
@@ -105,7 +105,7 @@ for root, dirs, files in os.walk("A3-networks"):
 
                 G, com_list = set_node_community(G, com, n_com)
                 mod = nx_comm.modularity(G, com_list)
-                mod = round(mod, 3)
+                mod = round(mod, 4)
                 print(f"{algorithm.title()} modularity ({ref_name}): {mod}")
 
                 mod_file = os.path.join("results", save_name + "_modularity.csv")

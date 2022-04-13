@@ -52,7 +52,7 @@ for (f in list.files(file.path("A3-networks"),
         skip = 1,
         quiet = T
       )
-      ref.modularity <- round(modularity(g, ref + 1), digits = 3)
+      ref.modularity <- round(modularity(g, ref + 1), digits = 4)
       aux.df[nrow(aux.df) + 1,] <-
         c(modularity.file, ref.modularity)
       df <- data.frame(matrix(nrow = 0, ncol = 3))
@@ -95,9 +95,9 @@ for (f in list.files(file.path("A3-networks"),
       if (algorithm == "infomap") {
         lc <- cluster_infomap(g)
       }
-      g.modularity <- round(modularity(lc), digits = 3)
+      g.modularity <- round(modularity(lc), digits = 4)
       cat(sprintf(
-        "%s modularity: %.3f\n",
+        "%s modularity: %.4f\n",
         toTitleCase(algorithm),
         g.modularity
       ))
