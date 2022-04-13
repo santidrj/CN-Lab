@@ -1,3 +1,2 @@
-Partition,Modularity,Reference Modularity
-Louvain,0.367,0.352
-Infomap,0.367,0.352
+Louvain,0.367,-
+Infomap,0.367,-
