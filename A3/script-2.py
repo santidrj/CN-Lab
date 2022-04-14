@@ -135,23 +135,23 @@ for root, dirs, files in os.walk("A3-networks"):
                 nx_com_to_pajek_file(G, os.path.join("nets", out_file + ".clu"))
 
                 # Plot
-                plt.clf()
-                x = nx.get_node_attributes(G, 'x').values()
-                y = nx.get_node_attributes(G, 'y').values()
-                if x and y:
-                    nodes = list(G.nodes())
-                    pos = dict(zip(nodes, tuple(zip(x, y))))
-                else:
-                    pos = nx.kamada_kawai_layout(G)
-                colors = list(nx.get_node_attributes(G, 'community').values())
-                nx.draw(G,
-                        pos=pos,
-                        node_size=50,
-                        with_labels=False,
-                        node_color=colors,
-                        cmap=plt.cm.hsv
-                        )
-                plt.savefig(os.path.join("figures", out_file + ".png"))
+                # plt.clf()
+                # x = nx.get_node_attributes(G, 'x').values()
+                # y = nx.get_node_attributes(G, 'y').values()
+                # if x and y:
+                #     nodes = list(G.nodes())
+                #     pos = dict(zip(nodes, tuple(zip(x, y))))
+                # else:
+                #     pos = nx.kamada_kawai_layout(G)
+                # colors = list(nx.get_node_attributes(G, 'community').values())
+                # nx.draw(G,
+                #         pos=pos,
+                #         node_size=50,
+                #         with_labels=False,
+                #         node_color=colors,
+                #         cmap=plt.cm.hsv
+                #         )
+                # plt.savefig(os.path.join("figures", out_file + ".png"))
             print("\n")
 
 """

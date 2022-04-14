@@ -3,7 +3,6 @@ library(vecsets)
 library(aricode)
 library(igraph)
 
-dir.create("figures", showWarnings = F)
 dir.create("nets", showWarnings = F)
 dir.create("results", showWarnings = F)
 
@@ -53,7 +52,7 @@ for (f in list.files(file.path("A3-networks"),
         quiet = T
       )
       ref.modularity <- round(modularity(g, ref + 1), digits = 4)
-      aux.df[nrow(aux.df) + 1,] <-
+      aux.df[nrow(aux.df) + 1, ] <-
         c(modularity.file, ref.modularity)
       df <- data.frame(matrix(nrow = 0, ncol = 3))
       colnames(df) <-
@@ -84,7 +83,7 @@ for (f in list.files(file.path("A3-networks"),
         quote = F,
         row.names = F
       )
-      aux.df[nrow(aux.df) + 1,] <- c(net.name, "-")
+      aux.df[nrow(aux.df) + 1, ] <- c(net.name, "-")
     }
     
     
@@ -106,30 +105,6 @@ for (f in list.files(file.path("A3-networks"),
       out.file <-
         paste(net.name, "_", algorithm, sep = "")
       
-      png(file.path("figures", paste(out.file, ".png", sep = "")))
-      if (all(c("x", "y") %in% vertex_attr_names(g))) {
-        g$layout <- cbind(V(g)$x, V(g)$y)
-        plot(
-          lc,
-          g,
-          vertex.label = NA,
-          vertex.size = 5,
-          edge.label = NA,
-          edge.width = .01,
-        )
-      } else {
-        plot(
-          lc,
-          g,
-          layout = layout_with_kk,
-          vertex.label = NA,
-          vertex.size = 5,
-          edge.label = NA,
-          edge.arrow.size = .1,
-        )
-      }
-      dev.off()
-      
       df <- data.frame(x = as.numeric(g.membership))
       name <- paste("*Vertices", length(V(g)))
       colnames(df) <- c(name)
@@ -142,7 +117,7 @@ for (f in list.files(file.path("A3-networks"),
         out <- aux.df[row, "File"]
         ref.modularity <- aux.df[row, "Modularity"]
         
-        cat("Reference modularity:", ref.modularity,"\n")
+        cat("Reference modularity:", ref.modularity, "\n")
         df <-
           data.frame(toTitleCase(algorithm), g.modularity, ref.modularity)
         write.table(
