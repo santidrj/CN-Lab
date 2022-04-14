@@ -131,6 +131,7 @@ for root, dirs, files in os.walk("A3-networks"):
                 nx_com_to_pajek_file(G, os.path.join("nets", out_file + ".clu"))
 
                 # Plot
+                plt.clear()
                 x = nx.get_node_attributes(G, 'x').values()
                 y = nx.get_node_attributes(G, 'y').values()
                 if x and y:
