@@ -10,7 +10,7 @@ for (net in list.files(
   full.names = T
 )) {
   net.name <- file_path_sans_ext(basename(net))
-  p <- sprintf("^%s*", net.name)
+  p <- sprintf("^%s.*", gsub("\\+", "\\\\+", net.name))
   g <- read.graph(net, format = "pajek")
   for (clustering in list.files("nets", pattern = p, full.names = T)) {
     m <- scan(
