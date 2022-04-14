@@ -1,4 +1,4 @@
 Partition1,Jaccard_Index,Normalized_Mutual_Information_Index_(arithmetic),Normalized_Variation_Of_Information_Metric
 nets/256_4_4_4_13_18_p_girvan-newman.clu,1.0000,1.0000,0.0000
-nets/256_4_4_4_13_18_p_infomap.clu,0.0164,0.4326,0.6343
+nets/256_4_4_4_13_18_p_infomap.clu,0.0166,0.4332,0.6328
 nets/256_4_4_4_13_18_p_louvain.clu,0.9048,0.9517,0.0254

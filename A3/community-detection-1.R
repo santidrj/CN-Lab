@@ -8,18 +8,6 @@ dir.create("results", showWarnings = F)
 
 algorithms <- c("louvain", "infomap")
 
-get.reference <- function(file) {
-  file.name <- file_path_sans_ext(basename(file))
-  name <- switch(
-    file.name,
-    "dolphins" = "dolphins-real.clu",
-    "football" = "football-conferences.clu",
-    "zachary_unwh" = "zachary_unwh-real.clu",
-    paste(file.name, "clu", sep = ".")
-  )
-  return(file.path(dirname(file), name))
-}
-
 for (f in list.files(file.path("A3-networks"),
                      pattern = "*.net",
                      recursive = TRUE,
@@ -35,8 +23,6 @@ for (f in list.files(file.path("A3-networks"),
   }
   
   
-  aux.df <- data.frame(matrix(nrow = 0, ncol = 2))
-  colnames(aux.df) <- c("File", "Modularity")
   old.modularity <- data.frame(matrix(nrow = 0, ncol = 3))
   colnames(old.modularity) <-
     c("Partition", "Modularity", "Reference Modularity")
@@ -56,6 +42,8 @@ for (f in list.files(file.path("A3-networks"),
       quiet = T
     )
     ref.modularity <- round(modularity(g, ref + 1), digits = 4)
+    aux.df <- data.frame(matrix(nrow = 0, ncol = 2))
+    colnames(aux.df) <- c("File", "Modularity")
     aux.df[nrow(aux.df) + 1, ] <-
       c(modularity.file, ref.modularity)
     out.table <- file.path(
@@ -93,7 +81,6 @@ for (f in list.files(file.path("A3-networks"),
         c("Partition", "Modularity", "Reference Modularity")
       
       if (file.exists(out.table)) {
-        # write("\n",file=out.table,append=TRUE)
         old.modularity <- read.csv(out.table)
         if (any(old.modularity$Partition == "Girvan-Newman")) {
           df[nrow(df) + 1,] <- old.modularity[old.modularity$Partition == "Girvan-Newman",]

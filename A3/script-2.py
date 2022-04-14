@@ -128,7 +128,7 @@ for root, dirs, files in os.walk("A3-networks"):
                     lines = f.readlines()
                     f.seek(0)
                     f.truncate()
-                    f.writelines(lines[:3])
+                    f.writelines(lines[:4])
                     f.writelines(f"{algorithm.title()},{mod},{ref_mod}")
 
                 # Partition
