@@ -1,3 +1,4 @@
 Partition1,Jaccard_Index,Normalized_Mutual_Information_Index_(arithmetic),Normalized_Variation_Of_Information_Metric
-nets/cat_cortex_sim_infomap.clu,0.0534,0.4697,0.6069
+nets/cat_cortex_sim_girvan-newman.clu,0.2642,0.1285,0.3502
+nets/cat_cortex_sim_infomap.clu,0.0588,0.4986,0.5739
 nets/cat_cortex_sim_louvain.clu,0.6711,0.7807,0.1323

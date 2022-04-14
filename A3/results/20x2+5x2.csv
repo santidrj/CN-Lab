@@ -1,3 +1,4 @@
 Partition1,Jaccard_Index,Normalized_Mutual_Information_Index_(arithmetic),Normalized_Variation_Of_Information_Metric
+nets/20x2+5x2_girvan-newman.clu,1.0000,1.0000,0.0000
 nets/20x2+5x2_infomap.clu,1.0000,1.0000,0.0000
 nets/20x2+5x2_louvain.clu,0.9412,0.9383,0.0354

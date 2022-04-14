@@ -7,11 +7,16 @@ for f in $files; do
     echo "Processing $f ..."
     filename=$(basename $f .clu)
     net=${filename%-*}
-    partition=`find nets/ -name ${net}*`
     first=true
     for partition in $(find nets/ -name ${net}* -print0 | xargs -r0); do
         if [ "rb125" = "$net" ]; then
             number=${filename#*-}
+            f2=$(basename $partition .clu)
+            alg=${f2#*_}
+            f2=${f2%_*}
+            if [[ $alg == "girvan-newman" && $number != ${f2#*-} ]]; then
+                continue
+            fi
             outfile="results/${net}-${number}.csv"
         else
             outfile="results/${net}.csv"
