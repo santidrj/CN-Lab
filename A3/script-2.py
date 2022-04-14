@@ -88,7 +88,7 @@ def get_number_com(filepath):
 for root, dirs, files in os.walk("A3-networks"):
     for file in files:
         net_name, ext = file.split(".")
-        if ext == "net" and net_name == "star":
+        if ext == "net":
             print(f"Network: {net_name}")
 
             # Modularity
