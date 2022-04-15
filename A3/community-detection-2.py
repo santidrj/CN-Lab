@@ -23,16 +23,6 @@ def get_reference(file):
     return ref
 
 
-# def to_pajek_com(communities, N):
-#     df = pd.DataFrame(index=range(N), columns=[f"*Vertices {N}"])
-#     c = 1
-#     for com in next(communities):
-#         print(list(com))
-#         df.iloc[list(com)] = c
-#         c += 1
-#     return df
-
-
 def set_node_community(G, communities, n_com=None, n_com_max=50):
     if n_com:
         if n_com > 2:
@@ -81,7 +71,6 @@ def pajek_file_to_nx_com(filepath):
 def get_number_com(filepath):
     with open(filepath) as f:
         lines = f.read().splitlines()[1:]
-    #lines = np.array(lines, dtype=np.int64)
     return len(set(lines))
 
 
@@ -128,48 +117,10 @@ for root, dirs, files in os.walk("A3-networks"):
                     lines = f.readlines()
                     f.seek(0)
                     f.truncate()
-                    f.writelines(lines[:4])
+                    f.writelines(lines[:3])
                     f.writelines(f"{algorithm.title()},{mod},{ref_mod}")
 
                 # Partition
                 nx_com_to_pajek_file(G, os.path.join("nets", out_file + ".clu"))
 
-                # Plot
-                # plt.clf()
-                # x = nx.get_node_attributes(G, 'x').values()
-                # y = nx.get_node_attributes(G, 'y').values()
-                # if x and y:
-                #     nodes = list(G.nodes())
-                #     pos = dict(zip(nodes, tuple(zip(x, y))))
-                # else:
-                #     pos = nx.kamada_kawai_layout(G)
-                # colors = list(nx.get_node_attributes(G, 'community').values())
-                # nx.draw(G,
-                #         pos=pos,
-                #         node_size=50,
-                #         with_labels=False,
-                #         node_color=colors,
-                #         cmap=plt.cm.hsv
-                #         )
-                # plt.savefig(os.path.join("figures", out_file + ".png"))
             print("\n")
-
-"""
-G = nx.karate_club_graph()
-communities = girvan_newman(G)
-
-node_groups = []
-for com in next(communities):
-  node_groups.append(list(com))
-
-print(node_groups)
-
-color_map = []
-for node in G:
-    if node in node_groups[0]:
-        color_map.append('blue')
-    else: 
-        color_map.append('green')  
-nx.draw(G, node_color=color_map, with_labels=True)
-plt.show()
-"""
