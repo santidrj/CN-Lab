@@ -16,7 +16,7 @@ public final class MonteCarlo {
 	private int N;
 	private Set<String> vertexSet;
 	private double[] beta;
-	private int mu;
+	private double mu;
 	double rho0;
 	int nRep;
 	int tMax;
@@ -27,9 +27,13 @@ public final class MonteCarlo {
 	// and the average simulation for each value of beta
 	public Object[] fit() {
 		double[] avgRho = new double[beta.length];
-		double[][] avgSim = new double[beta.length][tMax]; 
+		double[][] avgSim = new double[beta.length][tMax];
+		
+		// The script starts printing from the second line onwards
+		System.out.println("...");
 		
 		for(int b = 0; b < beta.length; b++) {
+			System.out.println(String.format("Fitting for beta %f", beta[b]));
 			double[] simBeta = avgSimulation(beta[b]);
 			avgRho[b] = avgStationary(simBeta);
 			avgSim[b] = simBeta;
@@ -69,8 +73,9 @@ public final class MonteCarlo {
 
 		// Run tMax steps
 		double[] rho = new double[tMax];
+		rho[0] = rho0;
 		HashMap<String, String> state = initialState;
-		for(int i = 0; i < tMax; i++) {
+		for(int i = 1; i < tMax; i++) {
 			state = step(beta, state);
 			rho[i] = stateToRho(state);
 		}
@@ -104,7 +109,7 @@ public final class MonteCarlo {
 	// Counts occurrences of I in a state and returns rho
 	public double stateToRho(HashMap<String, String> state) {
 		int count = Collections.frequency(state.values(), "I");
-		return count/N;
+		return (double) count/N;
 	}
 	
 	// Returns the number of infected neighbors for a given node
@@ -157,7 +162,7 @@ public final class MonteCarlo {
 		this.beta = beta;
 	}
 
-	public void setMu(int mu) {
+	public void setMu(double mu) {
 		this.mu = mu;
 	}
 

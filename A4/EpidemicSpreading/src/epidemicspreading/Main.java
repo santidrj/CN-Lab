@@ -35,23 +35,47 @@ public class Main {
 		int m0 = 5;
 		int m = 4;
 		// SIS parameters
-		double betaStart = 0;
-		double betaEnd = 1;
-		double betaInc = 0.02;
-		int mu = 1;
+		double betaStart = 0, betaEnd = 1, betaInc = 0.02;
+		double mu = 0.4;
 		double rho0 = 0.2;
 		int nRep = 100;
 		int tMax = 1000;
 		int tTrans = 900;
 		//
 		
-		int betaN = (int) ( (betaEnd - betaStart) / betaInc );
+
+		// Beta with a incremented number of values around
+		// the transition area
+		double betaStartTrans = 0.05, betaEndTrans = 0.1, betaIncTrans = 0.002;
+		int betaN = (int) ( 
+						( (betaStartTrans - betaStart) / betaInc ) 
+						+ ( (betaEndTrans - betaStartTrans) / betaIncTrans )
+		                + ( (betaEnd - betaEndTrans) / betaInc )
+		                );
+		
+		double[] beta = new double[betaN];
+		beta[0] = betaStart;
+		double inc = 0;
+		
+		for(int i = 1; i < betaN; i++) {
+			if(betaStartTrans <= beta[i-1] & beta[i-1] <= betaEndTrans) {
+				inc = betaIncTrans;
+			} else {
+				inc = betaInc;
+			}
+			beta[i] = beta[i-1] + inc;
+		}
+
+		/**
+		// Simple beta
+		int betaN = (int) ( (betaEnd - betaStart) / betaInc ) + 1;
 		double[] beta = new double[betaN];
 		beta[0] = betaStart;
 		for(int i = 1; i < betaN; i++) {
 			beta[i] = beta[i-1] + betaInc;
 		}
-		
+		**/
+
 		Graph<String, DefaultEdge> graph = null;
 		String fn = null;
 		
@@ -79,6 +103,15 @@ public class Main {
 		mc.setnRep(nRep);
 		mc.settMax(tMax);
 		mc.settTrans(tTrans);
-
+		
+		Object[] results = mc.fit();
+		double[] avgRho = (double[]) results[0];
+		double[][] avgSim = (double[][]) results[1];
+		
+		System.out.println("AvgRho:");
+		System.out.println(Arrays.toString(avgRho));
+		System.out.println("Beta:");
+		System.out.println(Arrays.toString(beta));
+		System.out.println("Done");
 	}
 }
