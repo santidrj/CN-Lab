@@ -2,10 +2,13 @@ package epidemicspreading;
 
 
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
@@ -25,10 +28,11 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		
 		String networksPath = Paths.get("src", "epidemicspreading", "networks").toString();
+		String resultsPath = Paths.get("src", "epidemicspreading", "results").toString();
 		
 		// General parameters
 		String network = "BA";
-		int N = 500;
+		int N = 50;
 		// ER parameters
 		double p = 0.4;
 		// BA parameters
@@ -51,6 +55,7 @@ public class Main {
 						( (betaStartTrans - betaStart) / betaInc ) 
 						+ ( (betaEndTrans - betaStartTrans) / betaIncTrans )
 		                + ( (betaEnd - betaEndTrans) / betaInc )
+		                -3
 		                );
 		
 		double[] beta = new double[betaN];
@@ -113,5 +118,30 @@ public class Main {
 		System.out.println("Beta:");
 		System.out.println(Arrays.toString(beta));
 		System.out.println("Done");
+		
+		// Save results
+		String resultsDir =  Paths.get(resultsPath, fn).toString();
+		File f = new File(resultsDir);
+		f.mkdir();
+		
+		String betaFile =  Paths.get(resultsDir, "beta.txt").toString();
+		PrintStream betaStream = new PrintStream(new File(betaFile));
+		for(double b: beta) {
+			betaStream.println(b);
+		}
+		
+		String avgRhoFile =  Paths.get(resultsDir, "avgRho.txt").toString();
+		PrintStream avgRhoStream = new PrintStream(new File(avgRhoFile));
+		for(double rho: avgRho) {
+			avgRhoStream.println(rho);
+		}
+		
+		for(int i = 0; i < avgSim.length; i++) {
+			String simBetaFile =  Paths.get(resultsDir, String.format(Locale.UK, "rho-%.3f.txt", beta[i])).toString();
+			PrintStream simBetaStream = new PrintStream(new File(simBetaFile));
+			for(double rhoT: avgSim[i]) {
+				simBetaStream.println(rhoT);
+			}
+		}
 	}
 }
