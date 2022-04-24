@@ -23,8 +23,8 @@ public final class MonteCarlo {
 	int tTrans;
 	
 	
-	// Computes average rho for each beta value
-	// and the average simulation for each value of beta
+	// Computes average rho and the average simulation
+	// for each value of beta
 	public Object[] fit() {
 		double[] avgRho = new double[beta.length];
 		double[][] avgSim = new double[beta.length][tMax];
