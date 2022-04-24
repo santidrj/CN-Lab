@@ -1,7 +1,7 @@
 library(tools)
 library(igraph)
 
-dir.create("nets", showWarnings = F)
+dir.create("partitions", showWarnings = F)
 dir.create("results", showWarnings = F)
 
 algorithms <- c("louvain", "infomap")
@@ -122,7 +122,7 @@ for (f in list.files(
     name <- paste("*Vertices", length(V(g)))
     colnames(df) <- c(name)
     write.table(df,
-                file.path("nets", paste(out.file, ".clu", sep = "")),
+                file.path("partitions", paste(out.file, ".clu", sep = "")),
                 quote = F,
                 row.names = F)
     

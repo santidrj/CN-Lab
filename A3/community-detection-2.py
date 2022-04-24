@@ -121,6 +121,6 @@ for root, dirs, files in os.walk("A3-networks"):
                     f.writelines(f"{algorithm.title()},{mod},{ref_mod}")
 
                 # Partition
-                nx_com_to_pajek_file(G, os.path.join("nets", out_file + ".clu"))
+                nx_com_to_pajek_file(G, os.path.join("partitions", out_file + ".clu"))
 
             print("\n")
