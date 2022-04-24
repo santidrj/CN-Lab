@@ -137,7 +137,7 @@ public class Main {
 		}
 		
 		for(int i = 0; i < avgSim.length; i++) {
-			String simBetaFile =  Paths.get(resultsDir, String.format(Locale.UK, "rho-%.3f.txt", beta[i])).toString();
+			String simBetaFile =  Paths.get(resultsDir, String.format(Locale.UK, "avgSim-%.3f.txt", beta[i])).toString();
 			PrintStream simBetaStream = new PrintStream(new File(simBetaFile));
 			for(double rhoT: avgSim[i]) {
 				simBetaStream.println(rhoT);
