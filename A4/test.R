@@ -1,4 +1,4 @@
 library(igraph)
 
-g <- read.graph("EpidemicSpreading/ER.net", format = "pajek")
+g <- read.graph("EpidemicSpreading/src/epidemicspreading/networks/BA-500-5-4.net", format = "pajek")
 plot(g)

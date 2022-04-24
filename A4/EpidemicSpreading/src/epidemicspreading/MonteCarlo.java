@@ -22,29 +22,33 @@ public final class MonteCarlo {
 	int tMax;
 	int tTrans;
 	
-	// Returns the average fraction of infected nodes over nRep simulations
-	// for each beta value
-	public static double[] fit(double[] beta, double rho0, int nRep, int tMax, int tTrans) {
+	
+	// Computes average rho for each beta value
+	// and the average simulation for each value of beta
+	public Object[] fit() {
 		double[] avgRho = new double[beta.length];
-		double[] rho = new double[tMax];
+		double[][] avgSim = new double[beta.length][tMax]; 
 		
-		return avgRho;
+		for(int b = 0; b < beta.length; b++) {
+			double[] simBeta = avgSimulation(beta[b]);
+			avgRho[b] = avgStationary(simBeta);
+			avgSim[b] = simBeta;
+		}
+		return new Object[]{avgRho, avgSim};
 	}
 	
-	// Returns the average fraction of infected nodes over nRep simulations
-	// for a specific value of beta
-	private double avgSimulation(double beta) {
-		double sum = 0;
+	// Runs nRep simulations and computes the avergae rho at each time step
+	// for a given value of beta (computes the "average simulation" we will plot later)
+	public double[] avgSimulation(double beta) {
+		double[] rho = new double[tMax];
 		for(int i = 0; i < nRep; i++) {
-			sum += simulation(beta);
+			rho = sumTwoArrays(rho, simulation(beta));
 		}
-		return sum/nRep;
-		
+		return divideArrayByInteger(rho, nRep);
 	}
 
-	// Returns the average fraction of infected nodes in the stationary state
-	// for a specific value of beta
-	private double simulation(double beta) {
+	// Computes rho at each time step of a simulation for a given value of beta
+	public double[] simulation(double beta) {
 		
 		// Create initial state with rh0 percentage of infected
 		List<String> values = new ArrayList<String>();
@@ -64,38 +68,113 @@ public final class MonteCarlo {
 		}
 
 		// Run tMax steps
-		double sum = 0;
+		double[] rho = new double[tMax];
 		HashMap<String, String> state = initialState;
 		for(int i = 0; i < tMax; i++) {
 			state = step(beta, state);
-			sum += stateToRho(state);
+			rho[i] = stateToRho(state);
 		}
-		return sum/nRep;
+			
+		return rho;
 	}
 	
-	private HashMap<String, String> step(double beta, HashMap<String, String> state) {
+	// Computes the next state
+	public HashMap<String, String> step(double beta, HashMap<String, String> state) {
 		HashMap<String, String> newState = new HashMap<>();
 		Random r = new Random();
 		for (String k : vertexSet) {
-			String v = null;
-			if(state.get(k) == "I") {
-				v = r.nextDouble() >= mu ? "I" : "S";
+			String newValue = null;
+			String nodeState = state.get(k);
+			
+			switch(nodeState){
+				case "I":
+					newValue = r.nextDouble() >= mu ? "I" : "S";
+					break;
+				case "S":
+					int nInfected = countInfected(k, state);
+					newValue = r.nextDouble() >= Math.pow((1-beta), nInfected) ? "I" : "S";
+					break;
 			}
-			if(state.get(k) == "S") {
-				//TODO
-				v = "0";
-			}
-			newState.put(k, v);
+
+			newState.put(k, newValue);
 		}
 		return newState;
-		
 	}
 	
-	private double stateToRho(HashMap<String, String> state) {
-		//TODO count occurrence of I in state and divide by N
-		return 0.;
+	// Counts occurrences of I in a state and returns rho
+	public double stateToRho(HashMap<String, String> state) {
+		int count = Collections.frequency(state.values(), "I");
+		return count/N;
 	}
 	
+	// Returns the number of infected neighbors for a given node
+	public int countInfected(String node, HashMap<String, String> state) {
+		int nInfected = 0;
+		for(DefaultEdge edge: graph.edgesOf(node)) {
+	    	String source = graph.getEdgeSource(edge);
+	    	String target = graph.getEdgeTarget(edge);
+	    	String neighbor = source != node ? source : target;
+	    	if(state.get(neighbor) == "I") {
+	    		nInfected += 1;
+	    	}
+		}
+		return nInfected;
+	}
 	
+	public double avgStationary(double[] sim) {
+		double sum = 0;
+		for(int i = tTrans; i < tMax; i++) {
+			sum += sim[i];
+		}
+		return sum/(tMax-tTrans);
+	}
+	
+	public double[] sumTwoArrays(double[] arr1, double[] arr2) {
+		int l = arr1.length;
+		double[] arr3 = new double[l];
+		for(int i = 0; i < l; i++) {
+			arr3[i] = arr1[i] + arr2[i];
+		}
+		return arr3;
+	}
+	
+	public double[] divideArrayByInteger(double[] arr, int n) {
+		double[] newArr = new double[arr.length];
+		for(int i = 0; i < arr.length; i++)
+		{
+		  newArr[i] = arr[i]/n;
+		}
+		return newArr;
+	}
+	
+	public void setGraph(Graph<String, DefaultEdge> graph) {
+		this.graph = graph;
+		this.vertexSet = this.graph.vertexSet();
+		this.N = this.vertexSet.size();
+	}
+
+	public void setBeta(double[] beta) {
+		this.beta = beta;
+	}
+
+	public void setMu(int mu) {
+		this.mu = mu;
+	}
+
+	public void setRho0(double rho0) {
+		this.rho0 = rho0;
+	}
+
+	public void setnRep(int nRep) {
+		this.nRep = nRep;
+	}
+
+	public void settMax(int tMax) {
+		this.tMax = tMax;
+	}
+
+	public void settTrans(int tTrans) {
+		this.tTrans = tTrans;
+	}	
 
 }
