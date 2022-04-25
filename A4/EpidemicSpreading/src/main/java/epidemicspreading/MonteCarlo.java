@@ -66,8 +66,12 @@ public class MonteCarlo {
         this.tTrans = tTrans;
     }
 
-    // Computes average rho and the average simulation
-    // for each value of beta
+    /**
+     * Run the Monte Carlo simulation and return the average Rho and simulation for each value of {@link #beta}.
+     *
+     * @return {@code Object[]} with the average Rho as {@code double[]} and the average simulations as {@code
+     * double[][]}.
+     */
     public Object[] fit() {
         double[] avgRho = new double[beta.length];
         double[][] avgSim = new double[beta.length][tMax];
@@ -86,7 +90,7 @@ public class MonteCarlo {
 
     // Runs nRep simulations and computes the average rho at each time step
     // for a given value of beta (computes the "average simulation" we will plot later)
-    public double[] avgSimulation(double beta) {
+    private double[] avgSimulation(double beta) {
         double[] rho = new double[tMax];
         for (int i = 0; i < nRep; i++) {
             rho = sumTwoArrays(rho, simulation(beta));
@@ -95,7 +99,7 @@ public class MonteCarlo {
     }
 
     // Computes rho at each time step of a simulation for a given value of beta
-    public double[] simulation(double beta) {
+    private double[] simulation(double beta) {
 
         // Create initial state with rh0 percentage of infected
         List<String> values = new ArrayList<>();
@@ -127,7 +131,7 @@ public class MonteCarlo {
     }
 
     // Computes the next state
-    public HashMap<String, String> step(double beta, HashMap<String, String> state) {
+    private HashMap<String, String> step(double beta, HashMap<String, String> state) {
         HashMap<String, String> newState = new HashMap<>();
         Random r = new Random();
         for (String k : vertexSet) {
@@ -150,13 +154,13 @@ public class MonteCarlo {
     }
 
     // Counts occurrences of I in a state and returns rho
-    public double stateToRho(HashMap<String, String> state) {
+    private double stateToRho(HashMap<String, String> state) {
         int count = Collections.frequency(state.values(), "I");
         return (double) count / N;
     }
 
     // Returns the number of infected neighbors for a given node
-    public int countInfected(String node, HashMap<String, String> state) {
+    private int countInfected(String node, HashMap<String, String> state) {
         int nInfected = 0;
         for (DefaultEdge edge : graph.edgesOf(node)) {
             String source = graph.getEdgeSource(edge);
@@ -169,7 +173,7 @@ public class MonteCarlo {
         return nInfected;
     }
 
-    public double avgStationary(double[] sim) {
+    private double avgStationary(double[] sim) {
         double sum = 0;
         for (int i = tTrans; i < tMax; i++) {
             sum += sim[i];
@@ -177,7 +181,7 @@ public class MonteCarlo {
         return sum / (tMax - tTrans);
     }
 
-    public double[] sumTwoArrays(double[] arr1, double[] arr2) {
+    private double[] sumTwoArrays(double[] arr1, double[] arr2) {
         int l = arr1.length;
         double[] arr3 = new double[l];
         for (int i = 0; i < l; i++) {
@@ -186,7 +190,7 @@ public class MonteCarlo {
         return arr3;
     }
 
-    public double[] divideArrayByInteger(double[] arr, int n) {
+    private double[] divideArrayByInteger(double[] arr, int n) {
         double[] newArr = new double[arr.length];
         for (int i = 0; i < arr.length; i++) {
             newArr[i] = arr[i] / n;

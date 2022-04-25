@@ -3,6 +3,7 @@ package epidemicspreading;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
 import org.jgrapht.generate.GnpRandomGraphGenerator;
+import org.jgrapht.generate.ScaleFreeGraphGenerator;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.util.SupplierUtil;
@@ -24,6 +25,10 @@ public class GenerateGraph {
             return Integer.toString(++id);
         }
     };
+
+    public static Supplier<String> getvSupplier() {
+        return vSupplier;
+    }
 
     /**
      * public static String toPajekEdge(String edge, int w) {
@@ -84,19 +89,25 @@ public class GenerateGraph {
 
 
     public static Graph<String, DefaultEdge> BA(int m0, int m, int n) {
-
         // Create the graph object
         Graph<String, DefaultEdge> graph = new SimpleGraph<>(vSupplier, SupplierUtil.createDefaultEdgeSupplier(),
             false);
-
         // Create the generator object
         BarabasiAlbertGraphGenerator<String, DefaultEdge> generator = new BarabasiAlbertGraphGenerator<>(m0, m, n);
-
         // Use the generator object to make a graph
         generator.generateGraph(graph);
-
         return graph;
+    }
 
+    public static Graph<String, DefaultEdge> ScaleFree(int n){
+        // Create the graph object
+        Graph<String, DefaultEdge> graph = new SimpleGraph<>(vSupplier, SupplierUtil.createDefaultEdgeSupplier(),
+            false);
+        // Create the generator object
+        ScaleFreeGraphGenerator<String, DefaultEdge> generator = new ScaleFreeGraphGenerator<>(n);
+        // Use the generator object to make a graph
+        generator.generateGraph(graph);
+        return graph;
     }
 
 }
