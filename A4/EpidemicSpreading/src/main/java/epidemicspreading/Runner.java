@@ -79,7 +79,7 @@ public class Runner {
                 break;
             case "ER":
                 graph = GenerateGraph.ER(N, p);
-                fn = String.format("%s-%d-%.f", network, N, p);
+                fn = String.format(Locale.UK, "%s-%d-%.1f", network, N, p);
                 break;
         }
 
