@@ -50,41 +50,42 @@ public class Runner {
             // SIS parameters
             double betaStart = 0, betaEnd = 1, betaInc = 0.02;
             double[] muList = {0.1, 0.5, 0.9};
+            double[][] betaTrans = {{0.0, 0.0, 0.002}, {0.03, 0.07, 0.002}, {0.07, 0.12, 0.002}};
             double rho0 = 0.2;
             int nRep = 100;
             int tMax = 1000;
             int tTrans = 900;
 
-            for (double mu : muList) {
-                System.out.printf("Fitting for mu %.1f", mu);
+            for (int k = 0; k < muList.length; k++) {
+                double mu = muList[k];
+                System.out.printf("Fitting for mu %.1f%n", mu);
                 // Beta with an incremented number of values around
                 // the transition area
-                //            double betaStartTrans = 0.05, betaEndTrans = 0.1, betaIncTrans = 0.002;
-                //            int betaN = (int) (
-                //                ((betaStartTrans - betaStart) / betaInc) + ((betaEndTrans - betaStartTrans) /
-                //                betaIncTrans) + (
-                //                (betaEnd - betaEndTrans) / betaInc) - 3);
-                //
-                //            double[] beta = new double[betaN];
-                //            beta[0] = betaStart;
-                //            double inc;
-                //
-                //            for (int i = 1; i < betaN; i++) {
-                //                if (betaStartTrans <= beta[i - 1] & beta[i - 1] <= betaEndTrans) {
-                //                    inc = betaIncTrans;
-                //                } else {
-                //                    inc = betaInc;
-                //                }
-                //                beta[i] = beta[i - 1] + inc;
-                //            }
+                double betaStartTrans = betaTrans[k][0], betaEndTrans = betaTrans[k][1], betaIncTrans = betaTrans[k][2];
+                int betaN = (int) (
+                    ((betaStartTrans - betaStart) / betaInc) + ((betaEndTrans - betaStartTrans) / betaIncTrans) + (
+                        (betaEnd - betaEndTrans) / betaInc) - 3);
 
-                // Simple beta
-                int betaN = (int) ((betaEnd - betaStart) / betaInc) + 1;
                 double[] beta = new double[betaN];
                 beta[0] = betaStart;
+                double inc;
+
                 for (int i = 1; i < betaN; i++) {
-                    beta[i] = beta[i - 1] + betaInc;
+                    if (betaStartTrans <= beta[i - 1] & beta[i - 1] <= betaEndTrans) {
+                        inc = betaIncTrans;
+                    } else {
+                        inc = betaInc;
+                    }
+                    beta[i] = beta[i - 1] + inc;
                 }
+
+                // Simple beta
+//                int betaN = (int) ((betaEnd - betaStart) / betaInc) + 1;
+//                double[] beta = new double[betaN];
+//                beta[0] = betaStart;
+//                for (int i = 1; i < betaN; i++) {
+//                    beta[i] = beta[i - 1] + betaInc;
+//                }
 
                 MonteCarlo mc = new MonteCarlo(graph, beta, mu, rho0, nRep, tMax, tTrans);
 

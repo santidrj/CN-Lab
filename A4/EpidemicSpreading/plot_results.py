@@ -12,7 +12,7 @@ if not os.path.exists(plots_path):
 results_path = os.path.join(OUTPUT_DIR, "results")
 for net in os.listdir(results_path):
     net_path = os.path.join(results_path, net)
-    for i, folder in enumerate(os.listdir(net_path)):
+    for i, folder in enumerate(sorted(os.listdir(net_path), key=lambda k: float(k.split("-")[-1]))):
         mu = folder.split("-")[1]
         with open(os.path.join(net_path, folder, "avgRho.txt"), "r") as f:
             avgRho = [float(line.strip("\n")) for line in f.readlines()]
