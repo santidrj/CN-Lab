@@ -34,7 +34,7 @@ public class Runner {
 
         // General parameters
 //        String network = "ER";
-        int N = 1000;
+//        int N = 1000;
         // ER parameters
 //        double p = 0.1;
 //        creatERGraph(N, p);
@@ -42,7 +42,7 @@ public class Runner {
 //        int m0 = 10;
 //        int m = 5;
 //        creatBAGraph(N, m0, m);
-        creatScaleFreeGraph(N);
+//        creatScaleFreeGraph(N);
 
         File f = selectNet();
         if (f != null) {

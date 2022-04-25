@@ -20,7 +20,7 @@ def set_plot_title(net_params, axis):
     elif net_params[0] == "ER":
         axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
     elif net_params[0] == "SF":
-        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
+        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $\\gamma={net_params[-1]}$")
     else:
         axis.set_title(f"{net_params[0]}")
 
