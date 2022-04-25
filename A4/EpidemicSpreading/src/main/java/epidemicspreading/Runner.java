@@ -1,11 +1,6 @@
 package epidemicspreading;
 
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -31,17 +26,15 @@ import java.util.Locale;
 public class Runner {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String resultsPath = Paths.get(System.getProperty("user.dir"), "output", "results").toString();
         new File(resultsPath).mkdirs();
-        String plotsPath = Paths.get(System.getProperty("user.dir"), "output", "figures").toString();
-        new File(plotsPath).mkdirs();
 
         // General parameters
 //        String network = "ER";
-//        int N = 1000;
+//        int N = 500;
         // ER parameters
-//        double p = 0.01;
+//        double p = 0.1;
 //        creatERGraph(N, p);
         // BA parameters
 //        int m0 = 10;
@@ -56,96 +49,88 @@ public class Runner {
 
             // SIS parameters
             double betaStart = 0, betaEnd = 1, betaInc = 0.02;
-            double mu = 0.4;
+            double[] muList = {0.1, 0.5, 0.9};
             double rho0 = 0.2;
             int nRep = 100;
             int tMax = 1000;
             int tTrans = 900;
-            //
 
+            for (double mu : muList) {
+                System.out.printf("Fitting for mu %.1f", mu);
+                // Beta with an incremented number of values around
+                // the transition area
+                //            double betaStartTrans = 0.05, betaEndTrans = 0.1, betaIncTrans = 0.002;
+                //            int betaN = (int) (
+                //                ((betaStartTrans - betaStart) / betaInc) + ((betaEndTrans - betaStartTrans) /
+                //                betaIncTrans) + (
+                //                (betaEnd - betaEndTrans) / betaInc) - 3);
+                //
+                //            double[] beta = new double[betaN];
+                //            beta[0] = betaStart;
+                //            double inc;
+                //
+                //            for (int i = 1; i < betaN; i++) {
+                //                if (betaStartTrans <= beta[i - 1] & beta[i - 1] <= betaEndTrans) {
+                //                    inc = betaIncTrans;
+                //                } else {
+                //                    inc = betaInc;
+                //                }
+                //                beta[i] = beta[i - 1] + inc;
+                //            }
 
-            // Beta with an incremented number of values around
-            // the transition area
-//            double betaStartTrans = 0.05, betaEndTrans = 0.1, betaIncTrans = 0.002;
-//            int betaN = (int) (
-//                ((betaStartTrans - betaStart) / betaInc) + ((betaEndTrans - betaStartTrans) / betaIncTrans) + (
-//                (betaEnd - betaEndTrans) / betaInc) - 3);
-//
-//            double[] beta = new double[betaN];
-//            beta[0] = betaStart;
-//            double inc;
-//
-//            for (int i = 1; i < betaN; i++) {
-//                if (betaStartTrans <= beta[i - 1] & beta[i - 1] <= betaEndTrans) {
-//                    inc = betaIncTrans;
-//                } else {
-//                    inc = betaInc;
-//                }
-//                beta[i] = beta[i - 1] + inc;
-//            }
-
-            // Simple beta
-            int betaN = (int) ((betaEnd - betaStart) / betaInc) + 1;
-            double[] beta = new double[betaN];
-            beta[0] = betaStart;
-            for (int i = 1; i < betaN; i++) {
-                beta[i] = beta[i - 1] + betaInc;
-            }
-
-            MonteCarlo mc = new MonteCarlo(graph, beta, mu, rho0, nRep, tMax, tTrans);
-
-            Object[] results = mc.fit();
-            double[] avgRho = (double[]) results[0];
-            double[][] avgSim = (double[][]) results[1];
-
-            System.out.println("AvgRho:");
-            System.out.println(Arrays.toString(avgRho));
-            System.out.println("Beta:");
-            System.out.println(Arrays.toString(beta));
-            System.out.println("Done");
-
-            // Save results
-            String resultsDir = Paths.get(resultsPath, fn + String.format(Locale.UK, "-%.1f", mu)).toString();
-            f = new File(resultsDir);
-            f.mkdir();
-
-            String betaFile = Paths.get(resultsDir, "beta.txt").toString();
-            try (PrintStream betaStream = new PrintStream(betaFile)) {
-                for (double b : beta) {
-                    betaStream.println(b);
+                // Simple beta
+                int betaN = (int) ((betaEnd - betaStart) / betaInc) + 1;
+                double[] beta = new double[betaN];
+                beta[0] = betaStart;
+                for (int i = 1; i < betaN; i++) {
+                    beta[i] = beta[i - 1] + betaInc;
                 }
-            } catch (FileNotFoundException | SecurityException e) {
-                System.out.println(e.getMessage());
-            }
 
-            String avgRhoFile = Paths.get(resultsDir, "avgRho.txt").toString();
-            DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-            try (PrintStream avgRhoStream = new PrintStream(avgRhoFile)) {
-                for (int i = 0; i < avgRho.length; i++) {
-                    double rho = avgRho[i];
-                    avgRhoStream.println(rho);
-                    NumberFormat formatter = new DecimalFormat("#.###");
-                    line_chart_dataset.addValue(rho, Double.toString(mu), formatter.format(beta[i]));
-                }
-            } catch (FileNotFoundException | SecurityException e) {
-                System.out.println(e.getMessage());
-            }
+                MonteCarlo mc = new MonteCarlo(graph, beta, mu, rho0, nRep, tMax, tTrans);
 
-            JFreeChart lineChart = ChartFactory.createLineChart("Monte Carlo simulation", "beta", "rho",
-                line_chart_dataset, PlotOrientation.VERTICAL, true, false, false);
+                Object[] results = mc.fit();
+                double[] avgRho = (double[]) results[0];
+                double[][] avgSim = (double[][]) results[1];
 
-            File chart = new File(Paths.get(plotsPath, fn + String.format(Locale.UK, "-%.1f.jpeg", mu)).toString());
-            ChartUtils.saveChartAsJPEG(chart, lineChart, 640, 480);
+                System.out.println("AvgRho:");
+                System.out.println(Arrays.toString(avgRho));
+                System.out.println("Beta:");
+                System.out.println(Arrays.toString(beta));
+                System.out.println("Done");
 
-            for (int i = 0; i < avgSim.length; i++) {
-                String simBetaFile = Paths.get(resultsDir, String.format(Locale.UK, "avgSim-%.3f.txt", beta[i]))
-                    .toString();
-                try (PrintStream simBetaStream = new PrintStream(simBetaFile)) {
-                    for (double rhoT : avgSim[i]) {
-                        simBetaStream.println(rhoT);
+                // Save results
+                String resultsDir = Paths.get(resultsPath, fn, String.format(Locale.UK, "mu-%.1f", mu)).toString();
+                f = new File(resultsDir);
+                f.mkdirs();
+
+                String betaFile = Paths.get(resultsDir, "beta.txt").toString();
+                try (PrintStream betaStream = new PrintStream(betaFile)) {
+                    for (double b : beta) {
+                        betaStream.println(b);
                     }
                 } catch (FileNotFoundException | SecurityException e) {
                     System.out.println(e.getMessage());
+                }
+
+                String avgRhoFile = Paths.get(resultsDir, "avgRho.txt").toString();
+                try (PrintStream avgRhoStream = new PrintStream(avgRhoFile)) {
+                    for (double rho : avgRho) {
+                        avgRhoStream.println(rho);
+                    }
+                } catch (FileNotFoundException | SecurityException e) {
+                    System.out.println(e.getMessage());
+                }
+
+                for (int i = 0; i < avgSim.length; i++) {
+                    String simBetaFile = Paths.get(resultsDir, String.format(Locale.UK, "avgSim-%.3f.txt", beta[i]))
+                        .toString();
+                    try (PrintStream simBetaStream = new PrintStream(simBetaFile)) {
+                        for (double rhoT : avgSim[i]) {
+                            simBetaStream.println(rhoT);
+                        }
+                    } catch (FileNotFoundException | SecurityException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             }
         }
@@ -220,15 +205,16 @@ public class Runner {
 
     private static void saveGraph(String networksPath, Graph<String, DefaultEdge> graph, String fn) {
         System.out.println(graph);
-        double avgDegree = 0;
+        float avgDegree = 0;
         for (String v : graph.vertexSet()) {
             avgDegree += graph.degreeOf(v);
         }
         avgDegree /= graph.vertexSet().size();
         System.out.printf("Average degree: %f", avgDegree);
+        String roundAvgDegree = Integer.toString(Math.round(avgDegree));
 
-        String networkFile = Paths.get(networksPath, fn + ".net").toString();
-        String graphMLFile = Paths.get(networksPath, fn + ".xml").toString();
+        String networkFile = Paths.get(networksPath, fn + "-" + roundAvgDegree + ".net").toString();
+        String graphMLFile = Paths.get(networksPath, fn + "-" + roundAvgDegree + ".xml").toString();
         GraphMLExporter<String, DefaultEdge> exporter = new GraphMLExporter<>();
         try {
             exporter.exportGraph(graph, new FileWriter(graphMLFile));
