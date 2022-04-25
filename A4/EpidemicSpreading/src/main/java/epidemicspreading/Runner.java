@@ -22,7 +22,7 @@ public class Runner {
         new File(resultsPath).mkdirs();
 
         // General parameters
-        String network = "ER";
+        String network = "BA";
         int N = 50;
         // ER parameters
         double p = 0.4;
