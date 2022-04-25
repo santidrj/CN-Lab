@@ -101,7 +101,7 @@ public class Runner {
         System.out.println("Done");
 
         // Save results
-        String resultsDir = Paths.get(resultsPath, fn+String.format("%.f"), mu))
+        String resultsDir = Paths.get(resultsPath, fn+String.format("%.f", mu))
                             .toString();
         File f = new File(resultsDir);
         f.mkdir();
