@@ -79,7 +79,7 @@ public class Runner {
                 break;
             case "ER":
                 graph = GenerateGraph.ER(N, p);
-                fn = String.format("%s-%d-%f", network, N, p);
+                fn = String.format("%s-%d-%.f", network, N, p);
                 break;
         }
 
@@ -101,7 +101,8 @@ public class Runner {
         System.out.println("Done");
 
         // Save results
-        String resultsDir = Paths.get(resultsPath, fn).toString();
+        String resultsDir = Paths.get(resultsPath, fn+String.format("%.f"), mu)
+                            .toString();
         File f = new File(resultsDir);
         f.mkdir();
 
