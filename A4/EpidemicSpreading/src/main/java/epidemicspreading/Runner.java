@@ -22,7 +22,7 @@ public class Runner {
         new File(resultsPath).mkdirs();
 
         // General parameters
-        String network = "BA";
+        String network = "ER";
         int N = 50;
         // ER parameters
         double p = 0.4;
@@ -101,8 +101,7 @@ public class Runner {
         System.out.println("Done");
 
         // Save results
-        String resultsDir = Paths.get(resultsPath, fn+String.format(Locale.UK, "-%.1f", mu))
-                            .toString();
+        String resultsDir = Paths.get(resultsPath, fn + String.format(Locale.UK, "-%.1f", mu)).toString();
         File f = new File(resultsDir);
         f.mkdir();
 
