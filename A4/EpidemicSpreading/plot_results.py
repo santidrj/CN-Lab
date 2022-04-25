@@ -36,19 +36,22 @@ for net in os.listdir(results_path):
             beta = [float(line.strip("\n")) for line in f.readlines()]
 
         simulations = [str(f) for f in Path(os.path.join(net_path, folder)).glob("avgSim*")]
+        simulations = sorted(simulations, key=lambda x: os.path.splitext(os.path.basename(x))[0].split("-")[-1])
         fig2, ax2 = plt.subplots()
         for j in range(0, len(simulations), len(simulations)//5):
             sim = simulations[j]
-            b = os.path.basename(sim).split("-")[-1].split(".")[0]
+            b = os.path.splitext(os.path.basename(sim))[0].split("-")[-1]
             with open(sim, "r") as f:
                 rho = [float(line.strip("\n")) for line in f.readlines()]
-            ax2.plot(rho, label=f'$\\beta={b}$')
+            ax2.plot(rho[:200], label=f'$\\beta={b}$')
         set_plot_title(net.split("-"), ax2)
+        title = ax2.get_title()
+        ax2.set_title(title + f", $SIS(\\mu={mu}, \\rho_{{0}}=0.2)$")
         ax2.legend(loc=0)
         ax2.set_xlabel(r"$t$")
         ax2.set_ylabel(r"$\rho$")
-        fig2.savefig(os.path.join(plots_path, net + "-avgSim.png"))
-        fig2.close()
+        fig2.savefig(os.path.join(plots_path, net + f"-avgSim-{mu}.png"))
+        plt.close(fig2)
 
         ax.plot(beta, avgRho, label=f'$\\mu$ = {mu}', color=COLORS[i])
 
@@ -60,4 +63,4 @@ for net in os.listdir(results_path):
     ax.xaxis.set_minor_locator(AutoMinorLocator())
     fig.savefig(os.path.join(plots_path, net + ".png"))
     # plt.show()
-    fig.close()
+    plt.close(fig)

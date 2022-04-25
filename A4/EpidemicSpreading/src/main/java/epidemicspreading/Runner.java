@@ -34,7 +34,7 @@ public class Runner {
 
         // General parameters
 //        String network = "ER";
-//        int N = 500;
+        int N = 1000;
         // ER parameters
 //        double p = 0.1;
 //        creatERGraph(N, p);
@@ -42,7 +42,7 @@ public class Runner {
 //        int m0 = 10;
 //        int m = 5;
 //        creatBAGraph(N, m0, m);
-//        creatScaleFreeGraph(N);
+        creatScaleFreeGraph(N);
 
         File f = selectNet();
         if (f != null) {
@@ -54,7 +54,7 @@ public class Runner {
             // SIS parameters
             double betaStart = 0, betaEnd = 1, betaInc = 0.02;
             double[] muList = {0.1, 0.5, 0.9};
-            double[][] betaTrans = {{0.0, 0.0, 0.002}, {0.0, 0.0, 0.002}, {0.0, 0.0, 0.002}};
+            double[][] betaTrans = {{0.0, 0.00, 0.002}, {0.00, 0.00, 0.002}, {0.00, 0.00, 0.002}};
             double rho0 = 0.2;
             int nRep = 100;
             int tMax = 1000;
@@ -192,7 +192,7 @@ public class Runner {
         NumberFormat formatter = new DecimalFormat("#.##");
         String fn = String.format(Locale.UK, "%s-%d-%s", "ER", n, formatter.format(p));
 
-        saveGraph(networksPath, graph, fn);
+        saveGraph(networksPath, graph, fn, false);
     }
 
     public static void creatBAGraph(int n, int m0, int m) {
@@ -203,7 +203,7 @@ public class Runner {
         Graph<String, DefaultEdge> graph = GenerateGraph.BA(m0, m, n);
         String fn = String.format("%s-%d-%d-%d", "BA", n, m0, m);
 
-        saveGraph(networksPath, graph, fn);
+        saveGraph(networksPath, graph, fn, false);
     }
 
     public static void creatScaleFreeGraph(int n) {
@@ -214,21 +214,42 @@ public class Runner {
         Graph<String, DefaultEdge> graph = GenerateGraph.ScaleFree(n);
         String fn = String.format("%s-%d", "SF", n);
 
-        saveGraph(networksPath, graph, fn);
+        saveGraph(networksPath, graph, fn, true);
     }
 
-    private static void saveGraph(String networksPath, Graph<String, DefaultEdge> graph, String fn) {
+    private static void saveGraph(String networksPath, Graph<String, DefaultEdge> graph, String fn, boolean scaleFree) {
         System.out.println(graph);
         float avgDegree = 0;
+        long minK = 1L;
         for (String v : graph.vertexSet()) {
-            avgDegree += graph.degreeOf(v);
+            int degree = graph.degreeOf(v);
+            if (degree < minK) {
+                minK = degree;
+            }
+            avgDegree += degree;
         }
-        avgDegree /= graph.vertexSet().size();
+        int n = graph.vertexSet().size();
+        avgDegree /= n;
         System.out.printf("Average degree: %f", avgDegree);
         String roundAvgDegree = Integer.toString(Math.round(avgDegree));
 
-        String networkFile = Paths.get(networksPath, fn + "-" + roundAvgDegree + ".net").toString();
-        String graphMLFile = Paths.get(networksPath, fn + "-" + roundAvgDegree + ".xml").toString();
+        double gamma = 0;
+        double denominator = minK - 0.5;
+        String networkFile;
+        String graphMLFile;
+        if (scaleFree) {
+            for (String v : graph.vertexSet()) {
+                int degree = graph.degreeOf(v);
+                gamma += Math.log(degree/denominator);
+            }
+            gamma = 1 + n*Math.pow(gamma, -1);
+            NumberFormat formatter = new DecimalFormat("#.###");
+            networkFile = Paths.get(networksPath, fn + "-" + formatter.format(gamma) + ".net").toString();
+            graphMLFile = Paths.get(networksPath, fn + "-" + formatter.format(gamma) + ".xml").toString();
+        } else {
+            networkFile = Paths.get(networksPath, fn + "-" + roundAvgDegree + ".net").toString();
+            graphMLFile = Paths.get(networksPath, fn + "-" + roundAvgDegree + ".xml").toString();
+        }
         GraphMLExporter<String, DefaultEdge> exporter = new GraphMLExporter<>();
         try {
             exporter.exportGraph(graph, new FileWriter(graphMLFile));
