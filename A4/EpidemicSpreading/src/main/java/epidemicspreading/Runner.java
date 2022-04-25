@@ -28,6 +28,7 @@ public class Runner {
 
     public static void main(String[] args) {
         String resultsPath = Paths.get(System.getProperty("user.dir"), "output", "results").toString();
+        //noinspection ResultOfMethodCallIgnored
         new File(resultsPath).mkdirs();
 
         // General parameters
@@ -50,7 +51,7 @@ public class Runner {
             // SIS parameters
             double betaStart = 0, betaEnd = 1, betaInc = 0.02;
             double[] muList = {0.1, 0.5, 0.9};
-            double[][] betaTrans = {{0.0, 0.03, 0.002}, {0.06, 0.12, 0.002}, {0.14, 0.18, 0.002}};
+            double[][] betaTrans = {{0.0, 0.0, 0.002}, {0.0, 0.05, 0.002}, {0.0, 0.05, 0.002}};
             double rho0 = 0.2;
             int nRep = 100;
             int tMax = 1000;
@@ -106,6 +107,7 @@ public class Runner {
                 // Save results
                 String resultsDir = Paths.get(resultsPath, fn, String.format(Locale.UK, "mu-%.1f", mu)).toString();
                 f = new File(resultsDir);
+                //noinspection ResultOfMethodCallIgnored
                 f.mkdirs();
 
                 String betaFile = Paths.get(resultsDir, "beta.txt").toString();
@@ -179,6 +181,7 @@ public class Runner {
 
     public static void creatERGraph(int n, double p) {
         String networksPath = Paths.get(System.getProperty("user.dir"), "A4-networks", "model").toString();
+        //noinspection ResultOfMethodCallIgnored
         new File(networksPath).mkdirs();
 
         Graph<String, DefaultEdge> graph = GenerateGraph.ER(n, p);
@@ -190,6 +193,7 @@ public class Runner {
 
     public static void creatBAGraph(int n, int m0, int m) {
         String networksPath = Paths.get(System.getProperty("user.dir"), "A4-networks", "model").toString();
+        //noinspection ResultOfMethodCallIgnored
         new File(networksPath).mkdirs();
 
         Graph<String, DefaultEdge> graph = GenerateGraph.BA(m0, m, n);
@@ -200,6 +204,7 @@ public class Runner {
 
     public static void creatScaleFreeGraph(int n) {
         String networksPath = Paths.get(System.getProperty("user.dir"), "A4-networks", "model").toString();
+        //noinspection ResultOfMethodCallIgnored
         new File(networksPath).mkdirs();
 
         Graph<String, DefaultEdge> graph = GenerateGraph.ScaleFree(n);
