@@ -1,6 +1,7 @@
 package epidemicspreading;
 
 
+import org.apache.commons.io.FileUtils;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -26,7 +27,7 @@ import java.util.Locale;
 public class Runner {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String resultsPath = Paths.get(System.getProperty("user.dir"), "output", "results").toString();
         //noinspection ResultOfMethodCallIgnored
         new File(resultsPath).mkdirs();
@@ -47,11 +48,13 @@ public class Runner {
         if (f != null) {
             Graph<String, DefaultEdge> graph = readGraph(f);
             String fn = f.getName().substring(0, f.getName().lastIndexOf("."));
+            System.out.println("Simulating epidemic spreading in network " + fn);
+            System.out.println();
 
             // SIS parameters
             double betaStart = 0, betaEnd = 1, betaInc = 0.02;
             double[] muList = {0.1, 0.5, 0.9};
-            double[][] betaTrans = {{0.0, 0.0, 0.002}, {0.0, 0.05, 0.002}, {0.0, 0.05, 0.002}};
+            double[][] betaTrans = {{0.0, 0.0, 0.002}, {0.0, 0.0, 0.002}, {0.0, 0.0, 0.002}};
             double rho0 = 0.2;
             int nRep = 100;
             int tMax = 1000;
@@ -67,8 +70,8 @@ public class Runner {
                 if (betaStartTrans == betaEndTrans) {
                     betaN = (int) ((betaEnd - betaStart) / betaInc) + 1;
                 } else {
-                    betaN = (int) (
-                        ((betaStartTrans - betaStart) / betaInc) + ((betaEndTrans - betaStartTrans) / betaIncTrans) + ((betaEnd - betaEndTrans) / betaInc) - 3);
+                    betaN = (int) (Math.round((betaStartTrans - betaStart) / betaInc) + Math.round(
+                        (betaEndTrans - betaStartTrans) / betaIncTrans) + Math.round((betaEnd - betaEndTrans)/betaInc));
                 }
 
                 double[] beta = new double[betaN];
@@ -76,7 +79,7 @@ public class Runner {
                 double inc;
 
                 for (int i = 1; i < betaN; i++) {
-                    if (betaStartTrans < beta[i - 1] & beta[i - 1] <= betaEndTrans) {
+                    if (betaStartTrans != betaEndTrans && betaStartTrans <= beta[i - 1] && beta[i - 1] <= betaEndTrans) {
                         inc = betaIncTrans;
                     } else {
                         inc = betaInc;
@@ -107,8 +110,9 @@ public class Runner {
                 // Save results
                 String resultsDir = Paths.get(resultsPath, fn, String.format(Locale.UK, "mu-%.1f", mu)).toString();
                 f = new File(resultsDir);
-                //noinspection ResultOfMethodCallIgnored
-                f.mkdirs();
+                if (!f.mkdirs()) {
+                    FileUtils.cleanDirectory(f);
+                }
 
                 String betaFile = Paths.get(resultsDir, "beta.txt").toString();
                 try (PrintStream betaStream = new PrintStream(betaFile)) {

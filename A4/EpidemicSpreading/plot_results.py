@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -11,6 +12,19 @@ if not os.path.exists(plots_path):
     os.mkdir(plots_path)
 
 results_path = os.path.join(OUTPUT_DIR, "results")
+
+
+def set_plot_title(net_params, axis):
+    if net_params[0] == "BA":
+        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
+    elif net_params[0] == "ER":
+        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
+    elif net_params[0] == "SF":
+        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
+    else:
+        axis.set_title(f"{net_params[0]}")
+
+
 for net in os.listdir(results_path):
     net_path = os.path.join(results_path, net)
     fig, ax = plt.subplots()
@@ -21,22 +35,29 @@ for net in os.listdir(results_path):
         with open(os.path.join(net_path, folder, "beta.txt"), "r") as f:
             beta = [float(line.strip("\n")) for line in f.readlines()]
 
+        simulations = [str(f) for f in Path(os.path.join(net_path, folder)).glob("avgSim*")]
+        fig2, ax2 = plt.subplots()
+        for j in range(0, len(simulations), len(simulations)//5):
+            sim = simulations[j]
+            b = os.path.basename(sim).split("-")[-1].split(".")[0]
+            with open(sim, "r") as f:
+                rho = [float(line.strip("\n")) for line in f.readlines()]
+            ax2.plot(rho, label=f'$\\beta={b}$')
+        set_plot_title(net.split("-"), ax2)
+        ax2.legend(loc=0)
+        ax2.set_xlabel(r"$t$")
+        ax2.set_ylabel(r"$\rho$")
+        fig2.savefig(os.path.join(plots_path, net + "-avgSim.png"))
+        fig2.close()
+
         ax.plot(beta, avgRho, label=f'$\\mu$ = {mu}', color=COLORS[i])
 
-    net_params = net.split("-")
-    if net_params[0] == "BA":
-        plt.title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
-    elif net_params[0] == "ER":
-        plt.title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
-    elif net_params[0] == "SF":
-        plt.title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
-    else:
-        plt.title(f"{net_params[0]}")
+    set_plot_title(net.split("-"), ax)
 
-    plt.legend(loc=0)
-    plt.xlabel(r"$\beta$")
-    plt.ylabel(r"$\rho$")
+    ax.legend(loc=0)
+    ax.set_xlabel(r"$\beta$")
+    ax.set_ylabel(r"$\rho$")
     ax.xaxis.set_minor_locator(AutoMinorLocator())
-    plt.savefig(os.path.join(plots_path, net + ".png"))
+    fig.savefig(os.path.join(plots_path, net + ".png"))
     # plt.show()
-    plt.close()
+    fig.close()
