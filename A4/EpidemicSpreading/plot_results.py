@@ -16,9 +16,9 @@ results_path = os.path.join(OUTPUT_DIR, "results")
 
 def set_plot_title(net_params, axis):
     if net_params[0] == "BA":
-        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
+        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $m_0={net_params[2]}$ $m={net_params[3]}$ $<k>={net_params[-1]}$")
     elif net_params[0] == "ER":
-        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $<k>={net_params[-1]}$")
+        axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $p={net_params[2]}$ $<k>={net_params[-1]}$")
     elif net_params[0] == "SF":
         axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $\\gamma={net_params[-1]}$")
     else:
