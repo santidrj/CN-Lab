@@ -21,6 +21,8 @@ def set_plot_title(net_params, axis):
         axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $p={net_params[2]}$ $<k>={net_params[-1]}$")
     elif net_params[0] == "SF":
         axis.set_title(f"${net_params[0]}$ $N={net_params[1]}$ $\\gamma={net_params[-1]}$")
+    elif net_params[0] == "inf":
+        axis.set_title(f"{net_params[0]}-{net_params[1]}")
     else:
         axis.set_title(f"{net_params[0]}")
 
@@ -38,7 +40,7 @@ for net in os.listdir(results_path):
         simulations = [str(f) for f in Path(os.path.join(net_path, folder)).glob("avgSim*")]
         simulations = sorted(simulations, key=lambda x: os.path.splitext(os.path.basename(x))[0].split("-")[-1])
         fig2, ax2 = plt.subplots()
-        for j in range(0, len(simulations), len(simulations)//5):
+        for j in range(len(simulations)//6, len(simulations), len(simulations)//6):
             sim = simulations[j]
             b = os.path.splitext(os.path.basename(sim))[0].split("-")[-1]
             with open(sim, "r") as f:
