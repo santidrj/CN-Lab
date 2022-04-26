@@ -26,7 +26,7 @@ def mmca(adj_matrix, p0, beta, mu, eps, t_max, t_trans):
 for root, dirs, files in os.walk(networks_path):
     for filename in files:
         net_name, ext = os.path.splitext(filename)
-        if ext == ".net":
+        if net_name == "BA-500-5-3-6" and ext == ".net":
             print(net_name)
             G = nx.read_pajek(os.path.join(root, filename))
             adj_matrix = nx.to_numpy_array(G)
@@ -38,7 +38,7 @@ for root, dirs, files in os.walk(networks_path):
                 n_beta = beta.shape[0]
                 rho = np.zeros(n_beta)
                 for i in range(n_beta):
-                    rho[i] = mmca(adj_matrix, 0.2, beta[i], mu, 0.001, 1000, 900)
+                    rho[i] = mmca(adj_matrix, 0.2, beta[i], mu, 0.005, 1000, 900)
                 np.savetxt(os.path.join(net_dir, "mmcaRho.txt"), rho)
 
 
