@@ -54,7 +54,7 @@ public class Runner {
             // SIS parameters
             double betaStart = 0, betaEnd = 1, betaInc = 0.02;
             double[] muList = {0.1, 0.5, 0.9};
-            double[][] betaTrans = {{0.0, 0.00, 0.002}, {0.00, 0.00, 0.002}, {0.00, 0.00, 0.002}};
+            double[][] betaTrans = {{0.0, 0.2, 0.002}, {0.0, 0.2, 0.002}, {0.0, 0.2, 0.002}};
             double rho0 = 0.2;
             int nRep = 100;
             int tMax = 1000;
