@@ -2,6 +2,8 @@ import os
 import networkx as nx
 import numpy as np
 
+LINE_CLEAR = "\x1b[2K"
+
 networks_path = os.path.join("A4-networks")
 results_path = os.path.join("output", "results")
 
@@ -27,7 +29,7 @@ for root, dirs, files in os.walk(networks_path):
         net_dir = os.path.join(results_path, net_name)
         for subdir in os.listdir(net_dir):
             mu = float(subdir.split("-")[-1])
-            print(f'\r mu = {mu}')
+            print(f'\r{LINE_CLEAR} mu = {mu}')
             beta = np.loadtxt(os.path.join(net_dir, subdir, "beta.txt"))
             n_beta = beta.shape[0]
             rho = np.empty(n_beta)
