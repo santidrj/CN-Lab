@@ -12,6 +12,7 @@ scipy = "^1.8.0"
 seaborn = "^0.11.2"
 
 [tool.poetry.dev-dependencies]
+black = {version = "^22.3.0", allow-prereleases = true}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
