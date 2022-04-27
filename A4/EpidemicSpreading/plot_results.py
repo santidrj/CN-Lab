@@ -55,10 +55,9 @@ for net in os.listdir(results_path):
 
         ax.plot(beta, avgRho, label=f'$\\mu$ = {mu}', color=COLORS[i])
 
-        mmcaRho_exists = os.path.exists(os.path.join(net_path, folder, "mmcaRho.txt"))
-        if mmcaRho_exists:
+        if os.path.exists(os.path.join(net_path, folder, "mmcaRho.txt")):
             mmcaRho = np.loadtxt(os.path.join(net_path, folder, "mmcaRho.txt"))
-            ax.plot(beta, mmcaRho, label=f'$\\mu, MMCA$ = {mu}', color=COLORS[i])
+            ax.plot(beta, mmcaRho, label=f'$\\mu, MMCA$ = {mu}', color=COLORS[i], linestyle='--')
 
     set_plot_title(net.split("-"), ax)
 
