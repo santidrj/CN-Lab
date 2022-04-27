@@ -57,7 +57,7 @@ for net in os.listdir(results_path):
 
         if os.path.exists(os.path.join(net_path, folder, "mmcaRho.txt")):
             mmcaRho = np.loadtxt(os.path.join(net_path, folder, "mmcaRho.txt"))
-            ax.plot(beta, mmcaRho, label=f'$\\mu, MMCA$ = {mu}', color=COLORS[i], linestyle='--')
+            ax.plot(beta, mmcaRho, label=f'$\\mu$ = {mu}, MMCA', color=COLORS[i], linestyle='--')
 
     set_plot_title(net.split("-"), ax)
 
