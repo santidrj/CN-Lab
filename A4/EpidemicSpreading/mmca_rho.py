@@ -6,26 +6,6 @@ networks_path = os.path.join("A4-networks")
 results_path = os.path.join("output", "results")
 
 
-"""
-def mmca(adj_matrix, p0, beta, mu, eps, t_max, t_trans):
-    n_nodes = adj_matrix.shape[0]
-    rho = np.empty(t_max)
-    eps_arr = np.full(n_nodes, eps)
-    p = np.full(n_nodes, p0)
-    for i in range(t_max):
-        print(f'\rt={i}/{t_max}', end='')
-        converged = False
-        while not converged:
-            q = np.array([np.prod(1 - beta * adj_matrix[i] * p) for i in range(n_nodes)])
-            old_p = p
-            p = (1-q) * (1-p) + (1-mu)*p
-            converged = sum(abs(p-old_p) > eps_arr) == 0
-
-        rho[i] = np.mean(p)
-    return np.mean(rho[t_trans:])
-"""
-
-
 def mmca(adj_matrix, p0, beta, mu, t_max, t_trans):
     print(f'\rbeta={beta}', end='')
     n_nodes = adj_matrix.shape[0]
