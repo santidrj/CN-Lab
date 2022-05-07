@@ -10,6 +10,11 @@ networkx = "^2.8"
 matplotlib = "^3.5.1"
 scipy = "^1.8.0"
 seaborn = "^0.11.2"
+Shapely = "^1.8.2"
+pyproj = "^3.3.1"
+gdal = {path = "Project/geopandas_dependencies/GDAL-3.4.2-cp39-cp39-win_amd64.whl"}
+fiona = {path = "Project/geopandas_dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl"}
+geopandas = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.3.0", allow-prereleases = true}
