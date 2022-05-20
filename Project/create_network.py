@@ -44,7 +44,7 @@ net.rename(
 net.drop_duplicates(subset=['source', 'target'], inplace=True)
 # Remove self-loops
 net.drop(net[net['source'] == net['target']].index, inplace=True)
-net.to_pickle(os.path.join(data_folder, 'bus-bcn.pkl'))
+net[['source', 'target', 'lines']].to_pickle(os.path.join(data_folder, 'bus-bcn-lines.pkl'))
 
 print('\nExample of data with weights and list of lines added:')
 print(net.head())
