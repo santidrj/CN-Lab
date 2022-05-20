@@ -2,8 +2,6 @@ import os
 
 import geopandas
 import networkx as nx
-import pandas as pd
-from matplotlib import pyplot as plt
 from networkx import DiGraph
 
 data_folder = 'data'
@@ -17,8 +15,11 @@ relevant_columns = ['NOM_PARADA', 'ORDRE', 'NOM_LINIA', 'SENTIT', 'geometry']
 net_data = net_data[relevant_columns]
 net_data.drop_duplicates(inplace=True)
 
-net_data_grouped = net_data.groupby(['NOM_LINIA', 'SENTIT'], sort=False).apply(
-    lambda g: g.sort_values(by='ORDRE', ascending=True)).reset_index(drop=True)
+net_data_grouped = (
+    net_data.groupby(['NOM_LINIA', 'SENTIT'], sort=False)
+    .apply(lambda g: g.sort_values(by='ORDRE', ascending=True))
+    .reset_index(drop=True)
+)
 net_data_grouped['PROXIMA_PARADA'] = net_data_grouped.groupby(['NOM_LINIA', 'SENTIT'])['NOM_PARADA'].shift(-1)
 net_data_grouped.dropna(inplace=True)
 weights = net_data_grouped.groupby(['NOM_PARADA', 'PROXIMA_PARADA'])['NOM_LINIA'].nunique().reset_index(drop=False)
@@ -28,13 +29,18 @@ print('\nExample of line with next stop added:')
 print(net_data_grouped.loc[net_data_grouped['NOM_LINIA'] == 'D20'])
 
 weighted_net_data = net_data_grouped.merge(weights, on=['NOM_PARADA', 'PROXIMA_PARADA'])
-lines_net_data = weighted_net_data.groupby(['NOM_PARADA', 'PROXIMA_PARADA'])['NOM_LINIA'].agg(list).reset_index(
-    name='NOM_LINIA')
-net = lines_net_data.merge(weighted_net_data[['NOM_PARADA', 'PROXIMA_PARADA', 'weight', 'geometry']],
-                           on=['NOM_PARADA', 'PROXIMA_PARADA'], how='left')
+lines_net_data = (
+    weighted_net_data.groupby(['NOM_PARADA', 'PROXIMA_PARADA'])['NOM_LINIA'].agg(list).reset_index(name='NOM_LINIA')
+)
+net = lines_net_data.merge(
+    weighted_net_data[['NOM_PARADA', 'PROXIMA_PARADA', 'weight', 'geometry']],
+    on=['NOM_PARADA', 'PROXIMA_PARADA'],
+    how='left',
+)
 net.rename(
     columns={'NOM_PARADA': 'source', 'PROXIMA_PARADA': 'target', 'NOM_LINIA': 'lines', 'geometry': 'coordinates'},
-    inplace=True)
+    inplace=True,
+)
 net.drop_duplicates(subset=['source', 'target'], inplace=True)
 # Remove self-loops
 net.drop(net[net['source'] == net['target']].index, inplace=True)
