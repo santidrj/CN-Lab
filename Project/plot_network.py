@@ -2,7 +2,6 @@ import os.path
 
 import networkx as nx
 from matplotlib import pyplot as plt
-from shapely.geometry import Point
 
 data_folder = 'data'
 G = nx.read_pajek(os.path.join(data_folder, 'bus-bcn.net'))

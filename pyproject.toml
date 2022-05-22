@@ -15,6 +15,7 @@ pyproj = "^3.3.1"
 gdal = {path = "Project/geopandas_dependencies/GDAL-3.4.2-cp39-cp39-win_amd64.whl"}
 fiona = {path = "Project/geopandas_dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl"}
 geopandas = "^0.10.2"
+future = "^0.18.2"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.3.0", allow-prereleases = true}
