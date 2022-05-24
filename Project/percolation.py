@@ -179,13 +179,13 @@ for ps_index, ps in enumerate(net_ps_arrays):
         alpha=0.5,
     )
 
-    axes[ps_index, 0].set_ylim(ymax=1.0)
+    axes[ps_index, 0].set_ylim(ymin=0.0, ymax=1.0)
     axes[ps_index, 1].set_ylim(ymin=0.0)
     axes[ps_index, 2].set_ylim(ymin=0.5)
 
     for ax in axes[ps_index, :]:
-        ax.set_xlim(xmin=ps.min(), xmax=ps.max() + (ps.max() - ps.min()) * 0.05)
-        ax.set_xticks(np.linspace(ps.min(), ps.max(), num=3))
+        ax.set_xlim(xmin=np.min(ps), xmax=np.max(ps) + (np.max(ps) - np.min(ps)) * 0.05)
+        ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=3))
 
     for ax in axes[ps_index, :-1]:
         ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3))
@@ -195,7 +195,7 @@ axes[0, 1].set_title(r'$\langle M_2 \rangle$')
 axes[0, 2].set_title(r'$\langle M_2 \rangle$')
 
 for ax in axes[-1, :]:
-    ax.set_xlabel(r'$p$')
+    ax.set_xlabel(r'$\phi$')
 
 plt.tight_layout()
 plt.show()
