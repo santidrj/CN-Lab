@@ -1,20 +1,22 @@
-import os
 import itertools
+import os
+import time
+
 import matplotlib.pyplot as plt
-import numpy as np
 import networkx as nx
 import networkx.algorithms.community as nx_comm
+import numpy as np
 from networkx.readwrite.pajek import read_pajek
-import time
 
 algorithm = "girvan-newman"
 
 
 def get_reference(file):
-    code = {"dolphins.net": "dolphins-real.clu",
-            "football.net": "football-conferences.clu",
-            "zachary_unwh.net": "zachary_unwh-real.clu"
-            }
+    code = {
+        "dolphins.net": "dolphins-real.clu",
+        "football.net": "football-conferences.clu",
+        "zachary_unwh.net": "zachary_unwh-real.clu",
+    }
     name = os.path.basename(file)
     if name in code.keys():
         ref = file.replace(name, code[name])
@@ -83,8 +85,11 @@ for root, dirs, files in os.walk("A3-networks"):
             # Modularity
             ref_file = get_reference(os.path.join(root, file))
             ref_name, ref_ext = os.path.basename(ref_file).split(".")
-            ref_files = [os.path.join(root, filename) for filename in os.listdir(root)
-                         if filename.startswith(ref_name) and filename.endswith(ref_ext)]
+            ref_files = [
+                os.path.join(root, filename)
+                for filename in os.listdir(root)
+                if filename.startswith(ref_name) and filename.endswith(ref_ext)
+            ]
 
             if not ref_files:
                 ref_files = [None]

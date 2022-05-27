@@ -2,10 +2,9 @@ import os
 from pprint import pprint
 
 import matplotlib.pyplot as plt
-import numpy as np
-
-import percolate
 import networkx as nx
+import numpy as np
+import percolate
 
 data_folder = 'data'
 G = nx.read_pajek(os.path.join(data_folder, 'bus-bcn.net'))
@@ -15,11 +14,27 @@ x_coord = nx.get_node_attributes(G, 'x')
 y_coord = nx.get_node_attributes(G, 'y')
 
 coordinates = {n: (x, y_coord[n]) for n, x in x_coord.items()}
+G.add_nodes_from(['Aux0', 'Aux1'], span=0)
+G.add_nodes_from(['Aux2', 'Aux3', 'Aux4'], span=1)
+G.add_edges_from(
+    [
+        ('Aux0', 'Mercabarna'),
+        ('Aux1', 'Pg  Zona Franca - Mineria'),
+        ('Aux2', 'Gran Via - Marina'),
+        ('Aux3', 'Metro Tetuan'),
+        ('Aux4', 'Panamà - Abadessa Olzet'),
+    ]
+)
+coordinates['Aux0'] = coordinates['Mercabarna']
+coordinates['Aux1'] = coordinates['Pg  Zona Franca - Mineria']
+coordinates['Aux2'] = coordinates['Gran Via - Marina']
+coordinates['Aux3'] = coordinates['Metro Tetuan']
+coordinates['Aux4'] = coordinates['Panamà - Abadessa Olzet']
 
 edges = list()
 fig, axes = plt.subplots(figsize=(8.0, 8.0), ncols=2, nrows=2, squeeze=True)
 axes = axes.ravel()
-for i, sample_state in enumerate(percolate.sample_states(G, spanning_cluster=False)):
+for i, sample_state in enumerate(percolate.sample_states(G, spanning_cluster=True)):
     if i > 100:
         break
     if 'edge' in sample_state:
@@ -30,8 +45,9 @@ for i, sample_state in enumerate(percolate.sample_states(G, spanning_cluster=Fal
             aux = G.copy()
             aux.remove_edges_from([e for e in G.edges if e not in edges])
             aux.remove_nodes_from(list(nx.isolates(aux)))
-            nx.draw_networkx_nodes(G, nodelist=G.nodes - aux.nodes, ax=axes[i // 25 - 1], pos=coordinates, node_size=1,
-                                   alpha=0.4)
+            nx.draw_networkx_nodes(
+                G, nodelist=G.nodes - aux.nodes, ax=axes[i // 25 - 1], pos=coordinates, node_size=1, alpha=0.4
+            )
             nx.draw(aux, ax=axes[i // 25 - 1], width=1, pos=coordinates, node_size=1)
             axes[i // 25 - 1].set_title(f'n = {i}')
             pprint(sample_state)
@@ -40,7 +56,7 @@ plt.show()
 plt.close()
 
 # Single run statistics
-runs = 40
+runs = 2
 # net_single_runs = [percolate.single_run_arrays(graph=G, spanning_cluster=False) for _ in range(runs)]
 # plot
 # fig, axes = plt.subplots(
@@ -75,14 +91,12 @@ runs = 40
 # del net_single_runs
 
 # Microcanonical ensemble averages
-net_microcanonical_averages = percolate.microcanonical_averages(G, runs, spanning_cluster=False)
+net_microcanonical_averages = percolate.microcanonical_averages(G, runs, spanning_cluster=True)
 net_microcanonical_averages_array = percolate.microcanonical_averages_arrays(net_microcanonical_averages)
 
-fig, axes = plt.subplots(
-    nrows=1, ncols=2, squeeze=True, figsize=(12.0, 6.0)
-)
+fig, axes = plt.subplots(nrows=1, ncols=2, squeeze=True, figsize=(12.0, 6.0))
 
-line, = axes[0].plot(
+(line,) = axes[0].plot(
     np.arange(net_microcanonical_averages_array['M'] + 1),
     net_microcanonical_averages_array['max_cluster_size'],
 )
@@ -129,13 +143,11 @@ plt.close()
 net_ps_arrays = [np.linspace(1.0 - x, 1.0, num=100) for x in [1.0, 0.5]]
 net_stats = [percolate.canonical_averages(ps, net_microcanonical_averages_array) for ps in net_ps_arrays]
 # plot
-fig, axes = plt.subplots(
-    nrows=len(net_ps_arrays), ncols=3, squeeze=True, figsize=(8.0, 4.5)
-)
+fig, axes = plt.subplots(nrows=len(net_ps_arrays), ncols=3, squeeze=True, figsize=(8.0, 4.5))
 for ps_index, ps in enumerate(net_ps_arrays):
     my_stats = net_stats[ps_index]
 
-    line, = axes[ps_index, 0].plot(
+    (line,) = axes[ps_index, 0].plot(
         ps,
         my_stats['max_cluster_size'],
     )
@@ -165,16 +177,8 @@ for ps_index, ps in enumerate(net_ps_arrays):
     )
     axes[ps_index, 2].fill_between(
         ps,
-        np.where(
-            my_stats['moments_ci'][2].T[1] > 0.0,
-            my_stats['moments_ci'][2].T[1],
-            0.01
-        ),
-        np.where(
-            my_stats['moments_ci'][2].T[0] > 0.0,
-            my_stats['moments_ci'][2].T[0],
-            0.01
-        ),
+        np.where(my_stats['moments_ci'][2].T[1] > 0.0, my_stats['moments_ci'][2].T[1], 0.01),
+        np.where(my_stats['moments_ci'][2].T[0] > 0.0, my_stats['moments_ci'][2].T[0], 0.01),
         facecolor=line.get_color(),
         alpha=0.5,
     )

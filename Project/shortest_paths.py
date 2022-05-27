@@ -12,8 +12,9 @@ G = nx.read_pajek(os.path.join(os.path.dirname(__file__), data_folder, 'bus-bcn.
 
 # Read list of lines for each edge
 df = pd.read_pickle(os.path.join(os.path.dirname(__file__), data_folder, 'bus-bcn-lines.pkl'))
-lines = {(u, v, k): df.loc[(df['source'] == u) & (df['target'] == v), 'lines'].values[0] for u, v, k in
-         G.edges(keys=True)}
+lines = {
+    (u, v, k): df.loc[(df['source'] == u) & (df['target'] == v), 'lines'].values[0] for u, v, k in G.edges(keys=True)
+}
 
 # Set the lines for each edge
 nx.set_edge_attributes(G, lines, 'lines')
@@ -22,7 +23,7 @@ nx.set_edge_attributes(G, lines, 'lines')
 # paths = dict(nx.all_pairs_dijkstra_path(G, weight='weight'))
 transhipment_dict = {}
 for source in G.nodes:
-    for target in (G.nodes - source):
+    for target in G.nodes - source:
         try:
             for path in nx.all_shortest_paths(G, source, target, None, 'dijkstra'):
                 previous_lines = lines[(path[0], path[1], 0)]
