@@ -140,7 +140,9 @@ def transhipment_and_shortest_path(net, lines, out_folder=""):
     transhipment_dict = {}
     path_length_dict = {}
     for source in net.nodes:
-        for target in (net.nodes - source):
+        for target in net.nodes:
+            if target == source:
+                continue
             try:
                 for path in nx.all_shortest_paths(net, source, target, None, 'dijkstra'):
                     previous_lines = lines[(path[0], path[1], 0)]
