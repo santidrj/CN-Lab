@@ -6,6 +6,8 @@ import networkx as nx
 from networkx import DiGraph
 import pickle
 
+# TODO: detect automatically lines leading to disconnected components
+
 data_folder = 'data'
 net_data = geopandas.read_file(os.path.join(data_folder, 'raw', 'parades_linia.json'))
 print(f'Dataframe shape: {net_data.shape}\n')
