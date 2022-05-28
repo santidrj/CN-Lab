@@ -7,6 +7,10 @@ import numpy as np
 import percolate
 
 data_folder = "data"
+out_dir = "output"
+if not os.path.exists(out_dir):
+    os.mkdir(out_dir)
+
 G = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
 G = nx.Graph(G)
 
@@ -14,27 +18,11 @@ x_coord = nx.get_node_attributes(G, "x")
 y_coord = nx.get_node_attributes(G, "y")
 
 coordinates = {n: (x, y_coord[n]) for n, x in x_coord.items()}
-G.add_nodes_from(["Aux0", "Aux1"], span=0)
-G.add_nodes_from(["Aux2", "Aux3", "Aux4"], span=1)
-G.add_edges_from(
-    [
-        ("Aux0", "Mercabarna"),
-        ("Aux1", "Pg  Zona Franca - Mineria"),
-        ("Aux2", "Gran Via - Marina"),
-        ("Aux3", "Metro Tetuan"),
-        ("Aux4", "Panamà - Abadessa Olzet"),
-    ]
-)
-coordinates["Aux0"] = coordinates["Mercabarna"]
-coordinates["Aux1"] = coordinates["Pg  Zona Franca - Mineria"]
-coordinates["Aux2"] = coordinates["Gran Via - Marina"]
-coordinates["Aux3"] = coordinates["Metro Tetuan"]
-coordinates["Aux4"] = coordinates["Panamà - Abadessa Olzet"]
 
 edges = list()
 fig, axes = plt.subplots(figsize=(8.0, 8.0), ncols=2, nrows=2, squeeze=True)
 axes = axes.ravel()
-for i, sample_state in enumerate(percolate.sample_states(G, spanning_cluster=True)):
+for i, sample_state in enumerate(percolate.sample_states(G, spanning_cluster=False)):
     if i > 100:
         break
     if "edge" in sample_state:
@@ -52,12 +40,13 @@ for i, sample_state in enumerate(percolate.sample_states(G, spanning_cluster=Tru
             axes[i // 25 - 1].set_title(f"n = {i}")
             pprint(sample_state)
 plt.tight_layout()
+plt.savefig(os.path.join(out_dir, "percolation-runs.png"))
 plt.show()
 plt.close()
 
 # Microcanonical ensemble averages
-runs = 2
-net_microcanonical_averages = percolate.microcanonical_averages(G, runs, spanning_cluster=True)
+runs = 40
+net_microcanonical_averages = percolate.microcanonical_averages(G, runs, spanning_cluster=False)
 net_microcanonical_averages_array = percolate.microcanonical_averages_arrays(net_microcanonical_averages)
 
 fig, axes = plt.subplots(nrows=1, ncols=2, squeeze=True, figsize=(12.0, 6.0))
@@ -109,42 +98,70 @@ plt.close()
 net_ps_arrays = [np.linspace(1.0 - x, 1.0, num=100) for x in [1.0, 0.5]]
 net_stats = [percolate.canonical_averages(ps, net_microcanonical_averages_array) for ps in net_ps_arrays]
 # plot
+fig, ax = plt.subplots(figsize=(8.0, 8.0))
+stats = net_stats[0]
+ps = net_ps_arrays[0]
+
+(line,) = ax.plot(
+    ps,
+    stats["max_cluster_size"],
+)
+ax.fill_between(
+    ps,
+    stats["max_cluster_size_ci"].T[1],
+    stats["max_cluster_size_ci"].T[0],
+    facecolor=line.get_color(),
+    alpha=0.5,
+)
+
+ax.set_ylim(ymin=0.0, ymax=1.0)
+ax.set_xlim(xmin=np.min(ps), xmax=np.max(ps) + (np.max(ps) - np.min(ps)) * 0.05)
+ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=3), fontsize=12)
+ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3), fontsize=12)
+ax.set_ylabel(r"$S$", fontsize=15)
+ax.set_title(r"perc. strength")
+ax.set_xlabel(r"$\phi$", fontsize=15)
+
+plt.tight_layout()
+plt.savefig(os.path.join(out_dir, "percolation.png"))
+plt.show()
+
 fig, axes = plt.subplots(nrows=len(net_ps_arrays), ncols=3, squeeze=True, figsize=(8.0, 4.5))
 for ps_index, ps in enumerate(net_ps_arrays):
-    my_stats = net_stats[ps_index]
+    stats = net_stats[ps_index]
 
     (line,) = axes[ps_index, 0].plot(
         ps,
-        my_stats["max_cluster_size"],
+        stats["max_cluster_size"],
     )
     axes[ps_index, 0].fill_between(
         ps,
-        my_stats["max_cluster_size_ci"].T[1],
-        my_stats["max_cluster_size_ci"].T[0],
+        stats["max_cluster_size_ci"].T[1],
+        stats["max_cluster_size_ci"].T[0],
         facecolor=line.get_color(),
         alpha=0.5,
     )
 
     axes[ps_index, 1].plot(
         ps,
-        my_stats["moments"][2],
+        stats["moments"][2],
     )
     axes[ps_index, 1].fill_between(
         ps,
-        my_stats["moments_ci"][2].T[1],
-        my_stats["moments_ci"][2].T[0],
+        stats["moments_ci"][2].T[1],
+        stats["moments_ci"][2].T[0],
         facecolor=line.get_color(),
         alpha=0.5,
     )
 
     axes[ps_index, 2].semilogy(
         ps,
-        my_stats["moments"][2],
+        stats["moments"][2],
     )
     axes[ps_index, 2].fill_between(
         ps,
-        np.where(my_stats["moments_ci"][2].T[1] > 0.0, my_stats["moments_ci"][2].T[1], 0.01),
-        np.where(my_stats["moments_ci"][2].T[0] > 0.0, my_stats["moments_ci"][2].T[0], 0.01),
+        np.where(stats["moments_ci"][2].T[1] > 0.0, stats["moments_ci"][2].T[1], 0.01),
+        np.where(stats["moments_ci"][2].T[0] > 0.0, stats["moments_ci"][2].T[0], 0.01),
         facecolor=line.get_color(),
         alpha=0.5,
     )
@@ -164,10 +181,12 @@ axes[0, 0].set_title(r"perc. strength")
 axes[0, 1].set_title(r"$\langle M_2 \rangle$")
 axes[0, 2].set_title(r"$\langle M_2 \rangle$")
 
-axes[0, 0].set_xlabel(r"$S$", fontsize=15)
+for ax in axes[:, 0]:
+    ax.set_ylabel(r"$S$", fontsize=15)
+
 for ax in axes[-1, :]:
     ax.set_xlabel(r"$\phi$", fontsize=15)
 
 plt.tight_layout()
-plt.savefig(os.path.join('output', 'percolation.png'))
+plt.savefig(os.path.join(out_dir, "percolation-extended.png"))
 plt.show()
