@@ -169,4 +169,5 @@ for ax in axes[-1, :]:
     ax.set_xlabel(r"$\phi$", fontsize=15)
 
 plt.tight_layout()
+plt.savefig(os.path.join('output', 'percolation.png'))
 plt.show()
