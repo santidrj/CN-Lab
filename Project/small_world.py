@@ -4,6 +4,8 @@ import numpy as np
 import os
 import pickle
 import matplotlib.pyplot as plt
+from networkx import NetworkXNoPath
+from pprint import pprint
 
 seed = None
 if seed:
@@ -130,6 +132,46 @@ def plot_hists(net, bins=20, out_folder=""):
     plt.xlabel("k")
     plt.ylabel("P(k)")
     plt.savefig(os.path.join(out_folder, "CCDF_log.png"))
+
+
+def transhipment_and_shortest_path(net, lines, out_folder=""):
+    # Obtain the shortest path using Dijkstra's algorithm
+    # paths = dict(nx.all_pairs_dijkstra_path(G, weight='weight'))
+    transhipment_dict = {}
+    path_length_dict = {}
+    for source in net.nodes:
+        for target in (net.nodes - source):
+            try:
+                for path in nx.all_shortest_paths(net, source, target, None, 'dijkstra'):
+                    previous_lines = lines[(path[0], path[1], 0)]
+                    current_stop = path[1]
+                    transhipments_count = 0
+                    for next_stop in path[2:]:
+                        bus_lines = lines[(current_stop, next_stop, 0)]
+                        if np.all(bus_lines != previous_lines):
+                            transhipments_count += 1
+                            previous_lines = bus_lines
+                        current_stop = next_stop
+                    transhipment_dict[(source, target)] = transhipment_dict.get((source, target), [])
+                    (transhipment_dict[(source, target)]).append(transhipments_count)
+                    print(f'Shortest path: {len(path)}')
+                    print(f'Number of transhipments: {transhipments_count}')
+                try:
+                    path_length_dict[(source, target)] = len(path)
+                except NameError:
+                    path_length_dict[(source, target)] = np.inf
+                print(transhipment_dict[(source, target)])
+            except NetworkXNoPath as e:
+                print(e)
+
+    f = open(os.path.join(out_folder, 'transhipment_dict.pkl'), 'wb')
+    pickle.dump(transhipment_dict, f)
+    f.close()
+    f = open(os.path.join(out_folder, 'path_length_dict.pkl'), 'wb')
+    pickle.dump(path_length_dict, f)
+    f.close()
+
+    pprint(transhipment_dict)
 
 # nx.draw(sub_net,
 #     nodelist=list(nx.weakly_connected_components(sub_net))[0],
