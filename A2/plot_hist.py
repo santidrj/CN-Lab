@@ -15,8 +15,8 @@ def plot_loglog_hist(k, net_name, alpha=3, C=1):
     fig = plt.figure()
     log_k = np.linspace(np.log10(min(node_degrees)), np.log10(max(node_degrees)), 20)
 
-    plt.hist(k, 10**log_k, log=True, density=True, label='empirical', color='lightgrey', edgecolor='white')
-    plt.plot(10**log_k, C * (10**log_k) ** (-alpha), '-b')
+    plt.hist(k, 10**log_k, log=True, density=True, label="empirical", color="lightgrey", edgecolor="white")
+    plt.plot(10**log_k, C * (10**log_k) ** (-alpha), "-b")
     plt.gca().set_xscale("log")
     plt.title("PDF")
     plt.xlabel("k")
@@ -25,7 +25,7 @@ def plot_loglog_hist(k, net_name, alpha=3, C=1):
 
     fig = plt.figure()
     plt.hist(
-        k, 10**log_k, cumulative=-1, log=True, density=True, label='empirical', color='lightgrey', edgecolor='white'
+        k, 10**log_k, cumulative=-1, log=True, density=True, label="empirical", color="lightgrey", edgecolor="white"
     )
     plt.gca().set_xscale("log")
     plt.title("CCDF")
@@ -36,7 +36,7 @@ def plot_loglog_hist(k, net_name, alpha=3, C=1):
 
 for root, dirs, files in os.walk(degrees_path):
     for name in files:
-        with open(os.path.join(root, name), 'rb') as f:
+        with open(os.path.join(root, name), "rb") as f:
             node_degrees = np.loadtxt(f)
 
         name_split = name.split(".")[0].split("-")

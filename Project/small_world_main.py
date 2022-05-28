@@ -1,17 +1,16 @@
 import os
 import pickle
-
-import networkx as nx
-import pandas as pd
-import small_world as sw
-import matplotlib.pyplot as plt
-import numpy as np
-
 from itertools import chain
 
-data_folder = 'data'
-out_folder = 'output'
-G = nx.read_pajek(os.path.join(os.path.dirname(__file__), data_folder, 'bus-bcn.net'))
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+import pandas as pd
+import small_world as sw
+
+data_folder = "data"
+out_folder = "output"
+G = nx.read_pajek(os.path.join(os.path.dirname(__file__), data_folder, "bus-bcn.net"))
 
 # Read list of lines for each edge
 # df = pd.read_pickle(os.path.join(os.path.dirname(__file__), data_folder, 'bus-bcn-lines.pkl'))
@@ -31,8 +30,8 @@ G = nx.read_pajek(os.path.join(os.path.dirname(__file__), data_folder, 'bus-bcn.
 # f = open(os.path.join(os.path.dirname(__file__), out_folder, 'path_length_dict.pkl'), 'rb')
 # path_length_dict = pickle.load(f)
 # f.close()
-#sw.plot_mean_path_N(G, connections, out_folder=os.path.join(os.path.dirname(__file__), out_folder), load=True)
-#sw.plot_hists(G, out_folder=os.path.join(os.path.dirname(__file__), out_folder))
-#sw.shortest_routes(G, lines, os.path.join(os.path.dirname(__file__), out_folder))
-#sw.plot_shortest_routes(transhipment_dict, path_length_dict, os.path.join(os.path.dirname(__file__), out_folder))
+# sw.plot_mean_path_N(G, connections, out_folder=os.path.join(os.path.dirname(__file__), out_folder), load=True)
+# sw.plot_hists(G, out_folder=os.path.join(os.path.dirname(__file__), out_folder))
+# sw.shortest_routes(G, lines, os.path.join(os.path.dirname(__file__), out_folder))
+# sw.plot_shortest_routes(transhipment_dict, path_length_dict, os.path.join(os.path.dirname(__file__), out_folder))
 sw.small_word_stats(G, os.path.join(os.path.dirname(__file__), out_folder))

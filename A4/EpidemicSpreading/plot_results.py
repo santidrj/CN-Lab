@@ -7,7 +7,7 @@ import seaborn as sns
 from matplotlib.ticker import AutoMinorLocator
 
 OUTPUT_DIR = "output"
-COLORS = sns.color_palette('bright')
+COLORS = sns.color_palette("bright")
 plots_path = os.path.join(OUTPUT_DIR, "figures")
 if not os.path.exists(plots_path):
     os.mkdir(plots_path)
@@ -45,7 +45,7 @@ for net in os.listdir(results_path):
             sim = simulations[j]
             b = os.path.splitext(os.path.basename(sim))[0].split("-")[-1]
             rho = np.loadtxt(sim)
-            ax2.plot(rho[:200], label=f'$\\beta={b}$')
+            ax2.plot(rho[:200], label=f"$\\beta={b}$")
         set_plot_title(net.split("-"), ax2)
         title = ax2.get_title()
         ax2.set_title(title + f", $SIS(\\mu={mu}, \\rho_{{0}}=0.2)$")
@@ -55,11 +55,11 @@ for net in os.listdir(results_path):
         fig2.savefig(os.path.join(plots_path, net + f"-avgSim-{mu}.png"))
         plt.close(fig2)
 
-        ax.plot(beta, avgRho, label=f'$\\mu$ = {mu}', color=COLORS[i])
+        ax.plot(beta, avgRho, label=f"$\\mu$ = {mu}", color=COLORS[i])
 
         if os.path.exists(os.path.join(net_path, folder, "mmcaRho.txt")):
             mmcaRho = np.loadtxt(os.path.join(net_path, folder, "mmcaRho.txt"))
-            ax.plot(beta, mmcaRho, label=f'$\\mu$ = {mu}, MMCA', color=COLORS[i], linestyle='--')
+            ax.plot(beta, mmcaRho, label=f"$\\mu$ = {mu}, MMCA", color=COLORS[i], linestyle="--")
 
     set_plot_title(net.split("-"), ax)
 

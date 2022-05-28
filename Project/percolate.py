@@ -67,46 +67,46 @@ def percolation_graph(graph, spanning_cluster=True):
     """
     ret = dict()
 
-    ret['graph'] = graph
-    ret['spanning_cluster'] = bool(spanning_cluster)
+    ret["graph"] = graph
+    ret["spanning_cluster"] = bool(spanning_cluster)
 
     # initialize percolation graph
     if spanning_cluster:
-        spanning_auxiliary_node_attributes = nx.get_node_attributes(graph, 'span')
-        ret['auxiliary_node_attributes'] = spanning_auxiliary_node_attributes
+        spanning_auxiliary_node_attributes = nx.get_node_attributes(graph, "span")
+        ret["auxiliary_node_attributes"] = spanning_auxiliary_node_attributes
         auxiliary_nodes = spanning_auxiliary_node_attributes.keys()
         if not list(auxiliary_nodes):
-            raise ValueError('Spanning cluster is to be detected, but no auxiliary nodes ' 'given.')
+            raise ValueError("Spanning cluster is to be detected, but no auxiliary nodes " "given.")
 
         spanning_sides = list(set(spanning_auxiliary_node_attributes.values()))
         if len(spanning_sides) != 2:
             raise ValueError(
-                'Spanning cluster is to be detected, but auxiliary nodes ' 'of less or more than 2 types (sides) given.'
+                "Spanning cluster is to be detected, but auxiliary nodes " "of less or more than 2 types (sides) given."
             )
 
-        ret['spanning_sides'] = spanning_sides
-        ret['auxiliary_edge_attributes'] = nx.get_edge_attributes(graph, 'span')
+        ret["spanning_sides"] = spanning_sides
+        ret["auxiliary_edge_attributes"] = nx.get_edge_attributes(graph, "span")
 
     # get subgraph on which percolation is to take place (strip off the
     # auxiliary nodes)
     if spanning_cluster:
-        perc_graph = graph.subgraph([node for node in graph.nodes_iter() if 'span' not in graph.node[node]])
+        perc_graph = graph.subgraph([node for node in graph.nodes_iter() if "span" not in graph.node[node]])
     else:
         perc_graph = graph
 
-    ret['perc_graph'] = perc_graph
+    ret["perc_graph"] = perc_graph
 
     # number of nodes N
-    ret['num_nodes'] = nx.number_of_nodes(perc_graph)
+    ret["num_nodes"] = nx.number_of_nodes(perc_graph)
 
     # number of edges M
-    ret['num_edges'] = nx.number_of_edges(perc_graph)
+    ret["num_edges"] = nx.number_of_edges(perc_graph)
 
     return ret
 
 
-def sample_states(graph, spanning_cluster=True, model='bond', copy_result=True):
-    '''
+def sample_states(graph, spanning_cluster=True, model="bond", copy_result=True):
+    """
     Generate successive sample states of the percolation model
 
     This is a :ref:`generator function <python:tut-generators>` to successively
@@ -208,29 +208,29 @@ def sample_states(graph, spanning_cluster=True, model='bond', copy_result=True):
     .. [4] Binder, K. & Heermann, D. W. Monte Carlo Simulation in Statistical
        Physics (Springer, Berlin, Heidelberg, 2010),
        `doi:10.1007/978-3-642-03163-2 <http://dx.doi.org/10.1007/978-3-642-03163-2>`_.
-    '''
+    """
 
-    if model != 'bond':
-        raise ValueError('Only bond percolation supported.')
+    if model != "bond":
+        raise ValueError("Only bond percolation supported.")
 
     if spanning_cluster:
-        auxiliary_node_attributes = nx.get_node_attributes(graph, 'span')
+        auxiliary_node_attributes = nx.get_node_attributes(graph, "span")
         auxiliary_nodes = auxiliary_node_attributes.keys()
         if not list(auxiliary_nodes):
-            raise ValueError('Spanning cluster is to be detected, but no auxiliary nodes ' 'given.')
+            raise ValueError("Spanning cluster is to be detected, but no auxiliary nodes " "given.")
 
         spanning_sides = list(set(auxiliary_node_attributes.values()))
         if len(spanning_sides) != 2:
             raise ValueError(
-                'Spanning cluster is to be detected, but auxiliary nodes ' 'of less or more than 2 types (sides) given.'
+                "Spanning cluster is to be detected, but auxiliary nodes " "of less or more than 2 types (sides) given."
             )
 
-        auxiliary_edge_attributes = nx.get_edge_attributes(graph, 'span')
+        auxiliary_edge_attributes = nx.get_edge_attributes(graph, "span")
 
     # get subgraph on which percolation is to take place (strip off the
     # auxiliary nodes)
     if spanning_cluster:
-        perc_graph = graph.subgraph([node for node in graph.nodes if 'span' not in graph.nodes[node]])
+        perc_graph = graph.subgraph([node for node in graph.nodes if "span" not in graph.nodes[node]])
     else:
         perc_graph = graph
 
@@ -246,14 +246,14 @@ def sample_states(graph, spanning_cluster=True, model='bond', copy_result=True):
     # initial iteration: no edges added yet (n == 0)
     ret = dict()
 
-    ret['n'] = 0
-    ret['N'] = num_nodes
-    ret['M'] = num_edges
-    ret['max_cluster_size'] = 1
-    ret['moments'] = np.ones(5) * (num_nodes - 1)
+    ret["n"] = 0
+    ret["N"] = num_nodes
+    ret["M"] = num_edges
+    ret["max_cluster_size"] = 1
+    ret["moments"] = np.ones(5) * (num_nodes - 1)
 
     if spanning_cluster:
-        ret['has_spanning_cluster'] = False
+        ret["has_spanning_cluster"] = False
 
     if copy_result:
         yield copy.deepcopy(ret)
@@ -285,12 +285,12 @@ def sample_states(graph, spanning_cluster=True, model='bond', copy_result=True):
 
     # loop over all edges (n == 1..M)
     for n in range(num_edges):
-        ret['n'] = n + 1
+        ret["n"] = n + 1
 
         # draw new edge from permutation
         edge_index = perm_edges[n]
         edge = list(perc_edges)[edge_index]
-        ret['edge'] = edge
+        ret["edge"] = edge
 
         # find roots and weights
         roots = [ds[node] for node in edge]
@@ -302,7 +302,7 @@ def sample_states(graph, spanning_cluster=True, model='bond', copy_result=True):
             if spanning_cluster:
                 ds_spanning.union(*roots)
 
-                ret['has_spanning_cluster'] = ds_spanning[side_roots[0]] == ds_spanning[side_roots[1]]
+                ret["has_spanning_cluster"] = ds_spanning[side_roots[0]] == ds_spanning[side_roots[1]]
 
             # find new root and weight
             root = ds[edge[0]]
@@ -314,24 +314,24 @@ def sample_states(graph, spanning_cluster=True, model='bond', copy_result=True):
             for i in [0, 1]:
                 if roots[i] is max_cluster_root:
                     continue
-                ret['moments'] -= weights[i] ** np.arange(5)
+                ret["moments"] -= weights[i] ** np.arange(5)
 
             if max_cluster_root in roots:
                 # merged with maximum cluster
                 max_cluster_root = root
-                ret['max_cluster_size'] = weight
+                ret["max_cluster_size"] = weight
             else:
                 # merged previously sub-maximum clusters
-                if ret['max_cluster_size'] >= weight:
+                if ret["max_cluster_size"] >= weight:
                     # previously largest cluster remains largest cluster
                     # add merged cluster to moments
-                    ret['moments'] += weight ** np.arange(5)
+                    ret["moments"] += weight ** np.arange(5)
                 else:
                     # merged cluster overtook previously largest cluster
                     # add previously largest cluster to moments
                     max_cluster_root = root
-                    ret['moments'] += ret['max_cluster_size'] ** np.arange(5)
-                    ret['max_cluster_size'] = weight
+                    ret["moments"] += ret["max_cluster_size"] ** np.arange(5)
+                    ret["max_cluster_size"] = weight
 
         if copy_result:
             yield copy.deepcopy(ret)
@@ -340,7 +340,7 @@ def sample_states(graph, spanning_cluster=True, model='bond', copy_result=True):
 
 
 def single_run_arrays(spanning_cluster=True, **kwargs):
-    r'''
+    r"""
     Generate statistics for a single run
 
     This is a stand-alone helper function to evolve a single sample state
@@ -388,48 +388,48 @@ def single_run_arrays(spanning_cluster=True, **kwargs):
 
     sample_states
 
-    '''
+    """
 
     # initial iteration
     # we do not need a copy of the result dictionary since we copy the values
     # anyway
-    kwargs['copy_result'] = False
+    kwargs["copy_result"] = False
     ret = dict()
 
     for n, state in enumerate(sample_states(spanning_cluster=spanning_cluster, **kwargs)):
 
         # merge cluster statistics
-        if 'N' in ret:
-            assert ret['N'] == state['N']
+        if "N" in ret:
+            assert ret["N"] == state["N"]
         else:
-            ret['N'] = state['N']
+            ret["N"] = state["N"]
 
-        if 'M' in ret:
-            assert ret['M'] == state['M']
+        if "M" in ret:
+            assert ret["M"] == state["M"]
         else:
-            ret['M'] = state['M']
-            number_of_states = state['M'] + 1
+            ret["M"] = state["M"]
+            number_of_states = state["M"] + 1
             max_cluster_size = np.empty(number_of_states)
             if spanning_cluster:
                 has_spanning_cluster = np.empty(number_of_states, dtype=np.bool)
             moments = np.empty((5, number_of_states))
 
-        max_cluster_size[n] = state['max_cluster_size']
+        max_cluster_size[n] = state["max_cluster_size"]
         for k in range(5):
-            moments[k, n] = state['moments'][k]
+            moments[k, n] = state["moments"][k]
         if spanning_cluster:
-            has_spanning_cluster[n] = state['has_spanning_cluster']
+            has_spanning_cluster[n] = state["has_spanning_cluster"]
 
-    ret['max_cluster_size'] = max_cluster_size
-    ret['moments'] = moments
+    ret["max_cluster_size"] = max_cluster_size
+    ret["moments"] = moments
     if spanning_cluster:
-        ret['has_spanning_cluster'] = has_spanning_cluster
+        ret["has_spanning_cluster"] = has_spanning_cluster
 
     return ret
 
 
 def _microcanonical_average_spanning_cluster(has_spanning_cluster, alpha):
-    r'''
+    r"""
     Compute the average number of runs that have a spanning cluster
 
     Helper function for :func:`microcanonical_averages`
@@ -533,18 +533,18 @@ def _microcanonical_average_spanning_cluster(has_spanning_cluster, alpha):
        Australia 28, 128-139 (2011),
        `doi:10.1071/as10046 <http://dx.doi.org/10.1071/as10046>`_.
 
-    '''
+    """
 
     ret = dict()
     runs = has_spanning_cluster.size
 
     # Bayesian posterior mean for Binomial proportion (uniform prior)
     k = has_spanning_cluster.sum(dtype=np.float)
-    ret['spanning_cluster'] = (k + 1) / (runs + 2)
+    ret["spanning_cluster"] = (k + 1) / (runs + 2)
 
     # Bayesian credible interval for Binomial proportion (uniform
     # prior)
-    ret['spanning_cluster_ci'] = scipy.stats.beta.ppf([alpha / 2, 1 - alpha / 2], k + 1, runs - k + 1)
+    ret["spanning_cluster_ci"] = scipy.stats.beta.ppf([alpha / 2, 1 - alpha / 2], k + 1, runs - k + 1)
 
     return ret
 
@@ -592,17 +592,17 @@ def _microcanonical_average_max_cluster_size(max_cluster_size, alpha):
     sqrt_n = np.sqrt(runs)
 
     max_cluster_size_sample_mean = max_cluster_size.mean()
-    ret['max_cluster_size'] = max_cluster_size_sample_mean
+    ret["max_cluster_size"] = max_cluster_size_sample_mean
 
     max_cluster_size_sample_std = max_cluster_size.std(ddof=1)
     if max_cluster_size_sample_std:
-        old_settings = np.seterr(all='raise')
-        ret['max_cluster_size_ci'] = scipy.stats.t.interval(
+        old_settings = np.seterr(all="raise")
+        ret["max_cluster_size_ci"] = scipy.stats.t.interval(
             1 - alpha, df=runs - 1, loc=max_cluster_size_sample_mean, scale=max_cluster_size_sample_std / sqrt_n
         )
         np.seterr(**old_settings)
     else:
-        ret['max_cluster_size_ci'] = max_cluster_size_sample_mean * np.ones(2)
+        ret["max_cluster_size_ci"] = max_cluster_size_sample_mean * np.ones(2)
 
     return ret
 
@@ -655,25 +655,25 @@ def _microcanonical_average_moments(moments, alpha):
     sqrt_n = np.sqrt(runs)
 
     moments_sample_mean = moments.mean(axis=0)
-    ret['moments'] = moments_sample_mean
+    ret["moments"] = moments_sample_mean
 
     moments_sample_std = moments.std(axis=0, ddof=1)
-    ret['moments_ci'] = np.empty((5, 2))
+    ret["moments_ci"] = np.empty((5, 2))
     for k in range(5):
         if moments_sample_std[k]:
-            old_settings = np.seterr(all='raise')
-            ret['moments_ci'][k] = scipy.stats.t.interval(
+            old_settings = np.seterr(all="raise")
+            ret["moments_ci"][k] = scipy.stats.t.interval(
                 1 - alpha, df=runs - 1, loc=moments_sample_mean[k], scale=moments_sample_std[k] / sqrt_n
             )
             np.seterr(**old_settings)
         else:
-            ret['moments_ci'][k] = moments_sample_mean[k] * np.ones(2)
+            ret["moments_ci"][k] = moments_sample_mean[k] * np.ones(2)
 
     return ret
 
 
-def microcanonical_averages(graph, runs=40, spanning_cluster=True, model='bond', alpha=alpha_1sigma, copy_result=True):
-    r'''
+def microcanonical_averages(graph, runs=40, spanning_cluster=True, model="bond", alpha=alpha_1sigma, copy_result=True):
+    r"""
     Generate successive microcanonical percolation ensemble averages
 
     This is a :ref:`generator function <python:tut-generators>` to successively
@@ -793,7 +793,7 @@ def microcanonical_averages(graph, runs=40, spanning_cluster=True, model='bond',
         or bond percolation. Physical Review E 64, 016706+ (2001),
         `doi:10.1103/physreve.64.016706 <http://dx.doi.org/10.1103/physreve.64.016706>`_.
 
-    '''
+    """
 
     try:
         runs = int(runs)
@@ -821,9 +821,9 @@ def microcanonical_averages(graph, runs=40, spanning_cluster=True, model='bond',
     ret = dict()
     for microcanonical_ensemble in zip(*run_iterators):
         # merge cluster statistics
-        ret['n'] = microcanonical_ensemble[0]['n']
-        ret['N'] = microcanonical_ensemble[0]['N']
-        ret['M'] = microcanonical_ensemble[0]['M']
+        ret["n"] = microcanonical_ensemble[0]["n"]
+        ret["N"] = microcanonical_ensemble[0]["N"]
+        ret["M"] = microcanonical_ensemble[0]["M"]
 
         max_cluster_size = np.empty(runs)
         moments = np.empty((runs, 5))
@@ -831,13 +831,13 @@ def microcanonical_averages(graph, runs=40, spanning_cluster=True, model='bond',
             has_spanning_cluster = np.empty(runs)
 
         for r, state in enumerate(microcanonical_ensemble):
-            assert state['n'] == ret['n']
-            assert state['N'] == ret['N']
-            assert state['M'] == ret['M']
-            max_cluster_size[r] = state['max_cluster_size']
-            moments[r] = state['moments']
+            assert state["n"] == ret["n"]
+            assert state["N"] == ret["N"]
+            assert state["M"] == ret["M"]
+            max_cluster_size[r] = state["max_cluster_size"]
+            moments[r] = state["moments"]
             if spanning_cluster:
-                has_spanning_cluster[r] = state['has_spanning_cluster']
+                has_spanning_cluster[r] = state["has_spanning_cluster"]
 
         ret.update(_microcanonical_average_max_cluster_size(max_cluster_size, alpha))
 
@@ -876,10 +876,10 @@ def spanning_1d_chain(length):
     """
     ret = nx.grid_graph(dim=[int(length + 2)])
 
-    ret.node[0]['span'] = 0
-    ret[0][1]['span'] = 0
-    ret.node[length + 1]['span'] = 1
-    ret[length][length + 1]['span'] = 1
+    ret.node[0]["span"] = 0
+    ret[0][1]["span"] = 0
+    ret.node[length + 1]["span"] = 1
+    ret[length][length + 1]["span"] = 1
 
     return ret
 
@@ -911,12 +911,12 @@ def spanning_2d_grid(length):
 
     for i in range(length):
         # side 0
-        ret.node[(0, i)]['span'] = 0
-        ret[(0, i)][(1, i)]['span'] = 0
+        ret.node[(0, i)]["span"] = 0
+        ret[(0, i)][(1, i)]["span"] = 0
 
         # side 1
-        ret.node[(length + 1, i)]['span'] = 1
-        ret[(length + 1, i)][(length, i)]['span'] = 1
+        ret.node[(length + 1, i)]["span"] = 1
+        ret[(length + 1, i)][(length, i)]["span"] = 1
 
     return ret
 
@@ -978,39 +978,39 @@ def microcanonical_averages_arrays(microcanonical_averages):
     ret = dict()
 
     for n, microcanonical_average in enumerate(microcanonical_averages):
-        assert n == microcanonical_average['n']
+        assert n == microcanonical_average["n"]
         if n == 0:
-            num_edges = microcanonical_average['M']
-            num_sites = microcanonical_average['N']
-            spanning_cluster = 'spanning_cluster' in microcanonical_average
-            ret['max_cluster_size'] = np.empty(num_edges + 1)
-            ret['max_cluster_size_ci'] = np.empty((num_edges + 1, 2))
+            num_edges = microcanonical_average["M"]
+            num_sites = microcanonical_average["N"]
+            spanning_cluster = "spanning_cluster" in microcanonical_average
+            ret["max_cluster_size"] = np.empty(num_edges + 1)
+            ret["max_cluster_size_ci"] = np.empty((num_edges + 1, 2))
 
             if spanning_cluster:
-                ret['spanning_cluster'] = np.empty(num_edges + 1)
-                ret['spanning_cluster_ci'] = np.empty((num_edges + 1, 2))
+                ret["spanning_cluster"] = np.empty(num_edges + 1)
+                ret["spanning_cluster_ci"] = np.empty((num_edges + 1, 2))
 
-            ret['moments'] = np.empty((5, num_edges + 1))
-            ret['moments_ci'] = np.empty((5, num_edges + 1, 2))
+            ret["moments"] = np.empty((5, num_edges + 1))
+            ret["moments_ci"] = np.empty((5, num_edges + 1, 2))
 
-        ret['max_cluster_size'][n] = microcanonical_average['max_cluster_size']
-        ret['max_cluster_size_ci'][n] = microcanonical_average['max_cluster_size_ci']
+        ret["max_cluster_size"][n] = microcanonical_average["max_cluster_size"]
+        ret["max_cluster_size_ci"][n] = microcanonical_average["max_cluster_size_ci"]
 
         if spanning_cluster:
-            ret['spanning_cluster'][n] = microcanonical_average['spanning_cluster']
-            ret['spanning_cluster_ci'][n] = microcanonical_average['spanning_cluster_ci']
+            ret["spanning_cluster"][n] = microcanonical_average["spanning_cluster"]
+            ret["spanning_cluster_ci"][n] = microcanonical_average["spanning_cluster_ci"]
 
-        ret['moments'][:, n] = microcanonical_average['moments']
-        ret['moments_ci'][:, n] = microcanonical_average['moments_ci']
+        ret["moments"][:, n] = microcanonical_average["moments"]
+        ret["moments_ci"][:, n] = microcanonical_average["moments_ci"]
 
     # normalize by number of sites
     for key in ret:
-        if 'spanning_cluster' in key:
+        if "spanning_cluster" in key:
             continue
         ret[key] /= num_sites
 
-    ret['M'] = num_edges
-    ret['N'] = num_sites
+    ret["M"] = num_edges
+    ret["N"] = num_sites
     return ret
 
 
@@ -1046,7 +1046,7 @@ def _binomial_pmf(n, p):
 
     ret[nmax] = 1.0
 
-    old_settings = np.seterr(under='ignore')  # seterr to known value
+    old_settings = np.seterr(under="ignore")  # seterr to known value
 
     for i in range(nmax + 1, n + 1):
         ret[i] = ret[i - 1] * (n - i + 1.0) / i * p / (1.0 - p)
@@ -1124,24 +1124,24 @@ def canonical_averages(ps, microcanonical_averages_arrays):
 
     """
 
-    num_sites = microcanonical_averages_arrays['N']
-    num_edges = microcanonical_averages_arrays['M']
-    spanning_cluster = 'spanning_cluster' in microcanonical_averages_arrays
+    num_sites = microcanonical_averages_arrays["N"]
+    num_edges = microcanonical_averages_arrays["M"]
+    spanning_cluster = "spanning_cluster" in microcanonical_averages_arrays
 
     ret = dict()
-    ret['ps'] = ps
-    ret['N'] = num_sites
-    ret['M'] = num_edges
+    ret["ps"] = ps
+    ret["N"] = num_sites
+    ret["M"] = num_edges
 
-    ret['max_cluster_size'] = np.empty(ps.size)
-    ret['max_cluster_size_ci'] = np.empty((ps.size, 2))
+    ret["max_cluster_size"] = np.empty(ps.size)
+    ret["max_cluster_size_ci"] = np.empty((ps.size, 2))
 
     if spanning_cluster:
-        ret['spanning_cluster'] = np.empty(ps.size)
-        ret['spanning_cluster_ci'] = np.empty((ps.size, 2))
+        ret["spanning_cluster"] = np.empty(ps.size)
+        ret["spanning_cluster_ci"] = np.empty((ps.size, 2))
 
-    ret['moments'] = np.empty((5, ps.size))
-    ret['moments_ci'] = np.empty((5, ps.size, 2))
+    ret["moments"] = np.empty((5, ps.size))
+    ret["moments_ci"] = np.empty((5, ps.size, 2))
 
     for p_index, p in enumerate(ps):
         binomials = _binomial_pmf(n=num_edges, p=p)
@@ -1150,21 +1150,21 @@ def canonical_averages(ps, microcanonical_averages_arrays):
             if len(key) <= 1:
                 continue
 
-            if key in ['max_cluster_size', 'spanning_cluster']:
+            if key in ["max_cluster_size", "spanning_cluster"]:
                 ret[key][p_index] = np.sum(binomials * value)
-            elif key in ['max_cluster_size_ci', 'spanning_cluster_ci']:
+            elif key in ["max_cluster_size_ci", "spanning_cluster_ci"]:
                 ret[key][p_index] = np.sum(np.tile(binomials, (2, 1)).T * value, axis=0)
-            elif key == 'moments':
+            elif key == "moments":
                 ret[key][:, p_index] = np.sum(np.tile(binomials, (5, 1)) * value, axis=1)
-            elif key == 'moments_ci':
+            elif key == "moments_ci":
                 ret[key][:, p_index] = np.sum(np.rollaxis(np.tile(binomials, (5, 2, 1)), 2, 1) * value, axis=1)
             else:
-                raise NotImplementedError('{}-dimensional array'.format(value.ndim))
+                raise NotImplementedError("{}-dimensional array".format(value.ndim))
 
     return ret
 
 
-def statistics(graph, ps, spanning_cluster=True, model='bond', alpha=alpha_1sigma, runs=40):
+def statistics(graph, ps, spanning_cluster=True, model="bond", alpha=alpha_1sigma, runs=40):
     """
     Helper function to compute percolation statistics
 

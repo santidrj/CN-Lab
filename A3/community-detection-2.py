@@ -54,7 +54,7 @@ def nx_com_to_pajek_file(G, filepath):
     f = open(filepath, "w")
     f.writelines(f"*Vertices {N}\n")
     for node in G.nodes():
-        f.writelines(str(G.nodes[node]['community']) + "\n")
+        f.writelines(str(G.nodes[node]["community"]) + "\n")
     f.close()
 
 
@@ -118,7 +118,7 @@ for root, dirs, files in os.walk("A3-networks"):
 
                 mod_file = os.path.join("results", save_name + "_modularity.csv")
 
-                with open(mod_file, 'r+') as f:
+                with open(mod_file, "r+") as f:
                     lines = f.readlines()
                     f.seek(0)
                     f.truncate()
