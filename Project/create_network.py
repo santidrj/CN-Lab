@@ -1,8 +1,12 @@
 import os
+from itertools import chain
 
 import geopandas
 import networkx as nx
 from networkx import DiGraph
+import pickle
+
+# TODO: detect automatically lines leading to disconnected components
 
 data_folder = 'data'
 net_data = geopandas.read_file(os.path.join(data_folder, 'raw', 'parades_linia.json'))
@@ -14,6 +18,9 @@ relevant_columns = ['NOM_PARADA', 'ORDRE', 'NOM_LINIA', 'SENTIT', 'geometry']
 
 net_data = net_data[relevant_columns]
 net_data.drop_duplicates(inplace=True)
+net_data.drop(net_data[net_data['NOM_LINIA'] == '111'].index, inplace=True)
+net_data.drop(net_data[net_data['NOM_LINIA'] == '128'].index, inplace=True)
+net_data.drop(net_data[net_data['NOM_LINIA'] == '118'].index, inplace=True)
 
 net_data_grouped = (
     net_data.groupby(['NOM_LINIA', 'SENTIT'], sort=False)
@@ -45,6 +52,18 @@ net.drop_duplicates(subset=['source', 'target'], inplace=True)
 # Remove self-loops
 net.drop(net[net['source'] == net['target']].index, inplace=True)
 net[['source', 'target', 'lines']].to_pickle(os.path.join(data_folder, 'bus-bcn-lines.pkl'))
+
+line_names = list(set(chain(*net['lines'].tolist())))
+connections = dict.fromkeys(line_names, [])
+for stop in net_data_grouped['NOM_PARADA'].unique().tolist():
+    lines_in_stop = net_data_grouped['NOM_LINIA'][net_data_grouped['NOM_PARADA'] == stop].unique()
+    if len(lines_in_stop) > 1:
+        for line in lines_in_stop:
+            connections[line] = list(set(connections[line] + lines_in_stop[lines_in_stop != line].tolist()))
+
+f = open(os.path.join(data_folder, 'line-connections.pkl'), "wb")
+pickle.dump(connections, f)
+f.close()
 
 print('\nExample of data with weights and list of lines added:')
 print(net.head())
