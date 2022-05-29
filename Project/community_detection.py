@@ -48,7 +48,7 @@ infomap_membership = comms.membership
 ig_com_to_pajek_file(infomap_membership, os.path.join(out_folder, "bcn-bus_infomap-communities.clu"))
 
 fig, ax = plt.subplots(figsize=(10, 10))
-ig.plot(comms, target=ax, vertex_size=3, edge_width=0.5, edge_arrow_size=0.5)
+ig.plot(comms, target=ax, vertex_size=3, edge_width=0.0, edge_arrow_size=0.0)
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
@@ -61,7 +61,7 @@ print(f"Number of communities detected by Infomap: {len(comms)}")
 
 nx_g = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
 assert nx.number_of_selfloops(nx_g) == 0
-comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=0.3)
+comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=0.3, seed=2022)
 louvain_modularity = nx_comm.modularity(nx_g, comms)
 
 nx_com_to_pajek_file(nx_g, comms, os.path.join(out_folder, "bcn-bus_louvain-communities.clu"))
@@ -78,17 +78,17 @@ for i in range(n_comm):
     nodes.extend(list(comms[i]))
     colors.extend([color_palette[i]] * len(comms[i]))
 
-popuplar_stops = [x[0] for x in sorted(nx_g.degree(), key=lambda x: -x[1])[:10]]
+# popuplar_stops = [x[0] for x in sorted(nx_g.degree(), key=lambda x: -x[1])[:10]]
 fig, ax = plt.subplots(figsize=(10, 10))
-nx.draw(
+nx.draw_networkx_nodes(
     nx_g,
     pos=coordinates,
     ax=ax,
     node_size=10,
     node_color=colors,
-    width=0.8,
-    arrowsize=8,
-    alpha=0.5,
+    # width=0.8,
+    # arrowsize=8,
+    # alpha=0.5,
 )
 # nx.draw_networkx_labels(
 #     nx.subgraph(nx_g, popuplar_stops), {n: c for n, c in coordinates.items() if n in popuplar_stops}, font_size=10
@@ -115,6 +115,7 @@ for i in range(n_comms):
         node_color=color_palette[i],
         width=0.5,
         alpha=0.8,
+        arrowsize=5,
     )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
@@ -136,6 +137,7 @@ for i in range(1, n_comms+1):
         node_color=color_palette[i],
         width=0.5,
         alpha=0.8,
+        arrowsize=5,
     )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
@@ -167,8 +169,6 @@ s.to_latex(
 
 # Betweenness
 betweenness = nx.betweenness_centrality(nx_g, normalized=True, weight="weight")
-print("Normalized betweeness")
-pprint(betweenness)
 stops = list(betweenness.keys())
 stop_betweenness = list(betweenness.values())
 top_10 = np.argsort(stop_betweenness)[::-1][:10]
