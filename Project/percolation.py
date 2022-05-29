@@ -98,7 +98,7 @@ plt.close()
 net_ps_arrays = [np.linspace(1.0 - x, 1.0, num=100) for x in [1.0, 0.5]]
 net_stats = [percolate.canonical_averages(ps, net_microcanonical_averages_array) for ps in net_ps_arrays]
 # plot
-fig, ax = plt.subplots(figsize=(8.0, 8.0))
+fig, ax = plt.subplots()
 stats = net_stats[0]
 ps = net_ps_arrays[0]
 
@@ -115,12 +115,11 @@ ax.fill_between(
 )
 
 ax.set_ylim(ymin=0.0, ymax=1.0)
-ax.set_xlim(xmin=np.min(ps), xmax=np.max(ps) + (np.max(ps) - np.min(ps)) * 0.05)
-ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=3), fontsize=12)
-ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3), fontsize=12)
+ax.set_xlim(xmin=0.0, xmax=1.0)
+# ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=3), fontsize=12)
+# ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3), fontsize=12)
 ax.set_ylabel(r"size of giant component $S$", fontsize=15)
-ax.set_title(r"Percolation strength")
-ax.set_xlabel(r"$\phi$", fontsize=15)
+ax.set_xlabel(r"ocupation probability $\phi$", fontsize=15)
 
 plt.tight_layout()
 plt.savefig(os.path.join(out_dir, "percolation.png"))
