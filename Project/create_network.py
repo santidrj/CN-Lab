@@ -1,12 +1,15 @@
 import os
 import pickle
 from itertools import chain
+from pprint import pprint
 
 import geopandas
 import networkx as nx
+from deepdiff import DeepDiff
 from networkx import DiGraph
 
 # TODO: detect automatically lines leading to disconnected components
+from pandas import Series
 
 data_folder = "data"
 net_data = geopandas.read_file(os.path.join(data_folder, "raw", "parades_linia.json"))
@@ -52,6 +55,7 @@ net.drop_duplicates(subset=["source", "target"], inplace=True)
 # Remove self-loops
 net.drop(net[net["source"] == net["target"]].index, inplace=True)
 net[["source", "target", "lines"]].to_pickle(os.path.join(data_folder, "bus-bcn-lines.pkl"))
+net.to_pickle(os.path.join(data_folder, "bus-bcn.pkl"))
 
 line_names = list(set(chain(*net["lines"].tolist())))
 connections = dict.fromkeys(line_names, [])
@@ -71,7 +75,13 @@ print(net.columns)
 
 G = nx.from_pandas_edgelist(net, edge_attr=["weight", "lines"], create_using=DiGraph)
 
-attributes = {n: {"x": c.x, "y": c.y} for n, c in zip(G.nodes, net["coordinates"])}
+attributes = {}
+aux_df = net_data.drop_duplicates(subset='NOM_PARADA').set_index('NOM_PARADA')
+for node in G.nodes:
+    pos = aux_df.loc[node, 'geometry']
+    if isinstance(pos, Series):
+        pos = pos[0]
+    attributes[node] = {"x": pos.x, "y": pos.y}
 nx.set_node_attributes(G, attributes)
 
 nx.write_pajek(G, os.path.join(data_folder, "bus-bcn.net"))

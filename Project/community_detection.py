@@ -36,6 +36,8 @@ def ig_com_to_pajek_file(comm_list, filepath):
 
 data_folder = "data"
 out_folder = "output"
+addition = 0.001
+
 g = Graph.Load(os.path.join(data_folder, "bus-bcn.net"), format="pajek")
 net_data = geopandas.read_file(os.path.join(data_folder, "raw", "parades_linia.json"))
 crs = net_data.crs.to_string()
@@ -47,10 +49,6 @@ ig_com_to_pajek_file(infomap_membership, os.path.join(out_folder, "bcn-bus_infom
 
 fig, ax = plt.subplots(figsize=(10, 10))
 ig.plot(comms, target=ax, vertex_size=3, edge_width=0, edge_arrow_size=0)
-# n_comm = 10
-# for i in range(n_comm):
-#     ig.plot(comms, target=ax, vertex_size=4, edge_width=0)
-addition = 0.001
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
@@ -80,13 +78,17 @@ for i in range(n_comm):
     nodes.extend(list(comms[i]))
     colors.extend([color_palette[i]] * len(comms[i]))
 
+popuplar_stops = [x[0] for x in sorted(nx_g.degree(), key=lambda x: -x[1])[:10]]
 fig, ax = plt.subplots(figsize=(10, 10))
 nx.draw_networkx_nodes(
-    nx.subgraph(nx_g, nodes),
+    nx_g,
     pos=coordinates,
     ax=ax,
     node_size=10,
     node_color=colors,
+)
+nx.draw_networkx_labels(
+    nx.subgraph(nx_g, popuplar_stops), {n: c for n, c in coordinates.items() if n in popuplar_stops}, font_size=10
 )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
