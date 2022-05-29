@@ -81,13 +81,13 @@ axes[1].set_ylim(ymin=0.0)
 for ax in axes:
     num_edges = net_microcanonical_averages_array["M"]
     ax.set_xlim(xmax=1.05 * num_edges)
-    ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3))
+    ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3), fontsize=12)
 
 axes[0].set_title(r"percolation strength")
 axes[1].set_title(r"$\langle M_2 \rangle$")
 
 for ax in axes:
-    ax.set_xlabel(r"$n$")
+    ax.set_xlabel(r"$n$", fontsize=15)
 
 plt.tight_layout()
 plt.show()
@@ -118,8 +118,8 @@ ax.set_ylim(ymin=0.0, ymax=1.0)
 ax.set_xlim(xmin=np.min(ps), xmax=np.max(ps) + (np.max(ps) - np.min(ps)) * 0.05)
 ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=3), fontsize=12)
 ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3), fontsize=12)
-ax.set_ylabel(r"$S$", fontsize=15)
-ax.set_title(r"perc. strength")
+ax.set_ylabel(r"size of giant component $S$", fontsize=15)
+ax.set_title(r"Percolation strength")
 ax.set_xlabel(r"$\phi$", fontsize=15)
 
 plt.tight_layout()

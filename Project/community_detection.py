@@ -1,10 +1,12 @@
 import os
+from pprint import pprint
 
 import geopandas
 import igraph as ig
 import matplotlib.pyplot as plt
 import networkx as nx
 import networkx.algorithms.community as nx_comm
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from contextily import add_basemap
@@ -57,7 +59,7 @@ fig.tight_layout()
 add_basemap(ax, crs=crs)
 plt.savefig(os.path.join(out_folder, "infomap_community.png"))
 plt.show()
-print(len(comms))
+print(f"Number of communities detected by Infomap: {len(comms)}")
 
 nx_g = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
 assert nx.number_of_selfloops(nx_g) == 0
@@ -74,12 +76,13 @@ nodes = []
 colors = []
 n_comm = len(comms)
 color_palette = sns.color_palette(n_colors=n_comm)
+groups = []
 for i in range(n_comm):
     nodes.extend(list(comms[i]))
     colors.extend([color_palette[i]] * len(comms[i]))
+    groups.append((list(comms[i]), i))
 
 fig, ax = plt.subplots(figsize=(10, 10))
-
 nx.draw_networkx_nodes(
     nx.subgraph(nx_g, nodes),
     pos=coordinates,
@@ -87,8 +90,6 @@ nx.draw_networkx_nodes(
     ax=ax,
     node_size=10,
     node_color=colors,
-    # width=0.5,
-    # arrowsize=5,
 )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
@@ -98,17 +99,17 @@ fig.tight_layout()
 add_basemap(ax, crs=crs)
 plt.savefig(os.path.join(out_folder, "louvain_community.png"))
 plt.show()
-print(len(comms))
+print(f"Number of communities detected by Louvain: {len(comms)}")
 
 modularities = pd.DataFrame(
     {"algorithm": ["Infomap", "Louvain"], "modulairty": [infomap_modularity, louvain_modularity]}
 )
 modularities.set_index("algorithm", inplace=True)
-s = modularities.style.highlight_max(props="textbf:--rwrap")
 tables_dir = os.path.join(out_folder, "tables")
 if not os.path.exists(tables_dir):
     os.makedirs(tables_dir)
 outfile = os.path.join(tables_dir, "modularity.tex")
+s = modularities.style.highlight_max(props="textbf:--rwrap")
 s.to_latex(
     outfile,
     position="!htbp",
@@ -116,4 +117,27 @@ s.to_latex(
     hrules=True,
     label="tab:modularity",
     caption="Network modularity using Infomap and Louvain algorithms.",
+)
+
+# Betweenness
+betweenness = nx.betweenness_centrality(nx_g, normalized=True, weight="weight")
+print("Normalized betweeness")
+pprint(betweenness)
+stops = list(betweenness.keys())
+stop_betweenness = list(betweenness.values())
+top_10 = np.argsort(stop_betweenness)[::-1][:10]
+print("Top-10 betweenness:")
+for i in top_10:
+    print(f"{stops[i]}: {stop_betweenness[i]}")
+
+df_betweenness = pd.DataFrame({"Bus stop": np.array(stops)[top_10], "Betweeness": np.array(stop_betweenness)[top_10]})
+df_betweenness.set_index("Bus stop", inplace=True)
+outfile = os.path.join(tables_dir, "betweenness.tex")
+df_betweenness.style.to_latex(
+    outfile,
+    position="!htbp",
+    position_float="centering",
+    hrules=True,
+    label="tab:betweenness",
+    caption="Top-10 bus stop betweenness.",
 )
