@@ -61,7 +61,7 @@ print(f"Number of communities detected by Infomap: {len(comms)}")
 
 nx_g = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
 assert nx.number_of_selfloops(nx_g) == 0
-comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=0.25)
+comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=0.3)
 louvain_modularity = nx_comm.modularity(nx_g, comms)
 
 nx_com_to_pajek_file(nx_g, comms, os.path.join(out_folder, "bcn-bus_louvain-communities.clu"))
@@ -105,14 +105,17 @@ print(f"Number of communities detected by Louvain: {len(comms)}")
 
 ordered_comms = sorted(comms, key=len, reverse=True)
 fig, ax = plt.subplots(figsize=(10, 10))
-nx.draw(
-    nx.subgraph(nx_g, ordered_comms[0]),
-    pos=coordinates,
-    ax=ax,
-    node_size=10,
-    width=0.5,
-    alpha=0.8,
-)
+n_comms = 4
+for i in range(n_comms):
+    nx.draw(
+        nx.subgraph(nx_g, ordered_comms[i]),
+        pos=coordinates,
+        ax=ax,
+        node_size=10,
+        node_color=color_palette[i],
+        width=0.5,
+        alpha=0.8,
+    )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
@@ -124,14 +127,16 @@ plt.show()
 
 
 fig, ax = plt.subplots(figsize=(10, 10))
-nx.draw(
-    nx.subgraph(nx_g, ordered_comms[-1]),
-    pos=coordinates,
-    ax=ax,
-    node_size=10,
-    width=0.5,
-    alpha=0.8,
-)
+for i in range(1, n_comms+1):
+    nx.draw(
+        nx.subgraph(nx_g, ordered_comms[-i]),
+        pos=coordinates,
+        ax=ax,
+        node_size=10,
+        node_color=color_palette[i],
+        width=0.5,
+        alpha=0.8,
+    )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
