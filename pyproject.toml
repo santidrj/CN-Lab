@@ -12,8 +12,9 @@ scipy = "^1.8.0"
 seaborn = "^0.11.2"
 Shapely = "^1.8.2"
 pyproj = "^3.3.1"
-gdal = {path = "Project/geopandas_dependencies/GDAL-3.4.2-cp39-cp39-win_amd64.whl"}
-fiona = {path = "Project/geopandas_dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl"}
+gdal = {path = "Project/geopandas_dependencies/GDAL-3.4.2-cp39-cp39-win_amd64.whl", markers = "sys_platform != 'linux'"}
+fiona = {path = "Project/geopandas_dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl", markers = "sys_platform != 'linux'"}
+rasterio = {path = "Project/geopandas_dependencies/rasterio-1.2.10-cp39-cp39-win_amd64.whl", markers = "sys_platform != 'linux'"}
 geopandas = "^0.10.2"
 future = "^0.18.2"
 numpy = "^1.22.4"
