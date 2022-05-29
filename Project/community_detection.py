@@ -63,7 +63,7 @@ print(f"Number of communities detected by Infomap: {len(comms)}")
 
 nx_g = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
 assert nx.number_of_selfloops(nx_g) == 0
-comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=1.0)
+comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=0.25)
 louvain_modularity = nx_comm.modularity(nx_g, comms)
 
 nx_com_to_pajek_file(nx_g, comms, os.path.join(out_folder, "bcn-bus_louvain-communities.clu"))
@@ -76,17 +76,14 @@ nodes = []
 colors = []
 n_comm = len(comms)
 color_palette = sns.color_palette(n_colors=n_comm)
-groups = []
 for i in range(n_comm):
     nodes.extend(list(comms[i]))
     colors.extend([color_palette[i]] * len(comms[i]))
-    groups.append((list(comms[i]), i))
 
 fig, ax = plt.subplots(figsize=(10, 10))
 nx.draw_networkx_nodes(
     nx.subgraph(nx_g, nodes),
     pos=coordinates,
-    nodelist=nodes,
     ax=ax,
     node_size=10,
     node_color=colors,
@@ -100,6 +97,45 @@ add_basemap(ax, crs=crs)
 plt.savefig(os.path.join(out_folder, "louvain_community.png"))
 plt.show()
 print(f"Number of communities detected by Louvain: {len(comms)}")
+
+ordered_comms = sorted(comms, key=len, reverse=True)
+fig, ax = plt.subplots(figsize=(10, 10))
+nx.draw(
+    nx.subgraph(nx_g, ordered_comms[0]),
+    pos=coordinates,
+    ax=ax,
+    node_size=10,
+    width=0.5,
+    alpha=0.8,
+)
+ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
+ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
+ax.axis("off")
+ax.set_aspect("auto")
+fig.tight_layout()
+add_basemap(ax, crs=crs)
+plt.savefig(os.path.join(out_folder, "biggest_louvain_community.png"))
+plt.show()
+
+
+fig, ax = plt.subplots(figsize=(10, 10))
+nx.draw(
+    nx.subgraph(nx_g, ordered_comms[-1]),
+    pos=coordinates,
+    ax=ax,
+    node_size=10,
+    width=0.5,
+    alpha=0.8,
+)
+ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
+ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
+ax.axis("off")
+ax.set_aspect("auto")
+fig.tight_layout()
+add_basemap(ax, crs=crs)
+plt.savefig(os.path.join(out_folder, "smallest_louvain_community.png"))
+plt.show()
+
 
 modularities = pd.DataFrame(
     {"algorithm": ["Infomap", "Louvain"], "modulairty": [infomap_modularity, louvain_modularity]}
