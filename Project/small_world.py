@@ -157,7 +157,6 @@ def shortest_routes(net, lines, out_folder=""):
     for source in net.nodes:
         i+=1
         print(f'Node {i}/{len(net.nodes)}')
-        start = time.time()
         for target in net.nodes:
             if target == source:
                 continue
@@ -183,8 +182,6 @@ def shortest_routes(net, lines, out_folder=""):
                 #print(transhipment_dict[(source, target)])
             except NetworkXNoPath as e:
                 print(e)
-        end = time.time()
-        print(f'Time: {end-start}')
     f = open(os.path.join(out_folder, 'transhipment_dict.pkl'), 'wb')
     pickle.dump(transhipment_dict, f)
     f.close()
@@ -197,24 +194,24 @@ def shortest_routes(net, lines, out_folder=""):
 def plot_shortest_routes(transhipment_dict, path_length_dict, out_folder=""):
     fig = plt.figure()
     unique_lengths, counts_lengths = np.unique(list(path_length_dict.values()), return_counts=True)
-    plt.plot(unique_lengths, counts_lengths/sum(counts_lengths), "ko-")
-    plt.xlabel(r"$l$", fontsize=15)
-    plt.ylabel(r"$P(l)$", fontsize=15)
+    plt.plot(unique_lengths, counts_lengths/sum(counts_lengths), "ko-", ms=5)
+    plt.xlabel(r"$L$", fontsize=15)
+    plt.ylabel(r"$P(L)$", fontsize=15)
     plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.show()
+    plt.yticks(fontsize=10)
     plt.savefig(os.path.join(out_folder, "path_lengths.png"))
+    plt.show()
 
     fig = plt.figure()
     trans_dict_simple = {k: min(transhipment_dict[k]) for k in transhipment_dict.keys()}
     unique_trans, counts_trans = np.unique(list(trans_dict_simple.values()), return_counts=True)
-    plt.plot(unique_trans, counts_trans/sum(counts_trans), "ko-")
+    plt.plot(unique_trans, counts_trans/sum(counts_trans), "ko-", ms=5)
     plt.xlabel(r'$n_t$', fontsize=15)
     plt.ylabel(r"$P(n_t)$", fontsize=15)
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
-    plt.show()
     plt.savefig(os.path.join(out_folder, "transhipments.png"))
+    plt.show()
 
 
 def small_word_stats(net, out_folder=""):
