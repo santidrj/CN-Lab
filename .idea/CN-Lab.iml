@@ -3,6 +3,11 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/A1/igraph/.Rproj.user" />
+      <excludeFolder url="file://$MODULE_DIR$/A2/.Rproj.user" />
+      <excludeFolder url="file://$MODULE_DIR$/A3/.Rproj.user" />
+      <excludeFolder url="file://$MODULE_DIR$/A4/EpidemicSpreading/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/A4/lib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
