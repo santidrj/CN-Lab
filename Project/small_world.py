@@ -17,7 +17,7 @@ if seed:
 
 def subset_net(net, lines):
     sub_net = nx.DiGraph(((u, v, e) for u, v, e in net.edges(data=True)
-                          if any(map(lambda l: l in e['lines'], lines))))
+                          if any(map(lambda l: l in e["lines"], lines))))
     return sub_net
 
 
@@ -99,7 +99,7 @@ def plot_diameter_N(net, connections, out_folder="", load=False, n_reps=100):
 
 def shortest_routes(net, lines):
     # Obtain the shortest path using Dijkstra's algorithm
-    # paths = dict(nx.all_pairs_dijkstra_path(G, weight='weight'))
+    # paths = dict(nx.all_pairs_dijkstra_path(G, weight="weight"))
     transhipment_dict = {}
     path_length_dict = {}
     # i = 0
