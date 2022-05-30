@@ -114,9 +114,6 @@ nx.draw_networkx_nodes(
     # arrowsize=8,
     # alpha=0.5,
 )
-# nx.draw_networkx_labels(
-#     nx.subgraph(nx_g, popuplar_stops), {n: c for n, c in coordinates.items() if n in popuplar_stops}, font_size=10
-# )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
@@ -130,7 +127,9 @@ print(f"Number of communities detected by Louvain: {len(comms)}")
 ordered_comms = sorted(comms, key=len, reverse=True)
 fig, ax = plt.subplots(figsize=(10, 10))
 n_comms = 4
+popular_stops = np.array(stops)[top_10]
 for i in range(n_comms):
+    bus_stops = [s for s in popular_stops if s in ordered_comms[i]]
     nx.draw(
         nx.subgraph(nx_g, ordered_comms[i]),
         pos=coordinates,
@@ -141,6 +140,10 @@ for i in range(n_comms):
         alpha=0.8,
         arrowsize=5,
     )
+    nx.draw_networkx_nodes(
+        nx.subgraph(nx_g, bus_stops), {n: c for n, c in coordinates.items() if n in bus_stops}, node_size=20,
+        node_color='yellow'
+    )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
@@ -150,9 +153,9 @@ add_basemap(ax, crs=crs)
 plt.savefig(os.path.join(out_folder, "biggest_louvain_community.png"))
 plt.show()
 
-
 fig, ax = plt.subplots(figsize=(10, 10))
-for i in range(1, n_comms+1):
+for i in range(1, n_comms + 1):
+    bus_stops = [s for s in popular_stops if s in ordered_comms[-i]]
     nx.draw(
         nx.subgraph(nx_g, ordered_comms[-i]),
         pos=coordinates,
@@ -163,6 +166,10 @@ for i in range(1, n_comms+1):
         alpha=0.8,
         arrowsize=5,
     )
+    nx.draw_networkx_nodes(
+        nx.subgraph(nx_g, bus_stops), {n: c for n, c in coordinates.items() if n in bus_stops}, node_size=20,
+        node_color='yellow'
+    )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
@@ -171,7 +178,6 @@ fig.tight_layout()
 add_basemap(ax, crs=crs)
 plt.savefig(os.path.join(out_folder, "smallest_louvain_community.png"))
 plt.show()
-
 
 modularities = pd.DataFrame(
     {"algorithm": ["Infomap", "Louvain"], "modulairty": [infomap_modularity, louvain_modularity]}
@@ -187,4 +193,3 @@ s.to_latex(
     label="tab:modularity",
     caption="Network modularity using Infomap and Louvain algorithms.",
 )
-
