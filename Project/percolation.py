@@ -46,7 +46,7 @@ plt.show()
 plt.close()
 
 # Microcanonical ensemble averages
-runs = 40
+runs = 1000
 net_microcanonical_averages = percolate.microcanonical_averages(G, runs, spanning_cluster=False)
 net_microcanonical_averages_array = percolate.microcanonical_averages_arrays(net_microcanonical_averages)
 
@@ -120,7 +120,7 @@ ax.set_xlim(xmin=0.0, xmax=1.0)
 # ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=3), fontsize=12)
 # ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3), fontsize=12)
 ax.set_ylabel(r"size of giant component $S$", fontsize=15)
-ax.set_xlabel(r"ocupation probability $\phi$", fontsize=15)
+ax.set_xlabel(r"occupation probability $\phi$", fontsize=15)
 
 plt.tight_layout()
 plt.savefig(os.path.join(out_dir, "percolation.png"))
