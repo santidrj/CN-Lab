@@ -40,14 +40,15 @@ tables_dir = os.path.join(out_folder, "tables")
 if not os.path.exists(tables_dir):
     os.makedirs(tables_dir)
 
+print("Loading BUS-BCN...")
 g = Graph.Load(os.path.join(data_folder, "bus-bcn.net"), format="pajek")
 nx_g = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
-assert nx.number_of_selfloops(nx_g) == 0
 net_data = geopandas.read_file(os.path.join(data_folder, "raw", "parades_linia.json"))
 crs = net_data.crs.to_string()
 del net_data
 
 # Betweenness
+print("Computing betweenness...")
 betweenness = nx.betweenness_centrality(nx_g, normalized=True, weight="weight")
 stops = list(betweenness.keys())
 stop_betweenness = list(betweenness.values())
@@ -69,13 +70,14 @@ df_betweenness.style.to_latex(
 )
 
 # Community detection
-comms = g.community_infomap(edge_weights="weight")
-infomap_modularity = comms.modularity
-infomap_membership = comms.membership
+print("Running Infomap...")
+infomap_comms = g.community_infomap(edge_weights="weight")
+infomap_modularity = infomap_comms.modularity
+infomap_membership = infomap_comms.membership
 ig_com_to_pajek_file(infomap_membership, os.path.join(out_folder, "bcn-bus_infomap-communities.clu"))
 
 fig, ax = plt.subplots(figsize=(10, 10))
-ig.plot(comms, target=ax, vertex_size=3, edge_width=0.0, edge_arrow_size=0.0)
+ig.plot(infomap_comms, target=ax, vertex_size=3, edge_width=0.0, edge_arrow_size=0.0)
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
@@ -84,8 +86,9 @@ fig.tight_layout()
 add_basemap(ax, crs=crs)
 plt.savefig(os.path.join(out_folder, "infomap_community.png"))
 plt.show()
-print(f"Number of communities detected by Infomap: {len(comms)}")
+print(f"Number of communities detected by Infomap: {len(infomap_comms)}")
 
+print("Running Louvain...")
 comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=0.3, seed=2022)
 louvain_modularity = nx_comm.modularity(nx_g, comms)
 
@@ -128,55 +131,62 @@ ordered_comms = sorted(comms, key=len, reverse=True)
 fig, ax = plt.subplots(figsize=(10, 10))
 n_comms = 4
 popular_stops = np.array(stops)[top_10]
-for i in range(n_comms):
-    bus_stops = [s for s in popular_stops if s in ordered_comms[i]]
+
+
+def draw_communities(G, community: set, color):
+    bus_stops = [s for s in popular_stops if s in community]
     nx.draw(
-        nx.subgraph(nx_g, ordered_comms[i]),
+        nx.subgraph(nx_g, community),
         pos=coordinates,
         ax=ax,
         node_size=10,
-        node_color=color_palette[i],
+        node_color=color,
         width=0.5,
         alpha=0.8,
         arrowsize=5,
     )
+    subgraph = nx.subgraph(G, bus_stops)
+    stops_pos = {n: c for n, c in coordinates.items() if n in bus_stops}
     nx.draw_networkx_nodes(
-        nx.subgraph(nx_g, bus_stops), {n: c for n, c in coordinates.items() if n in bus_stops}, node_size=20,
+        subgraph, pos=stops_pos, node_size=20,
         node_color='yellow'
     )
+    # nx.draw_networkx_labels(subgraph, stops_pos)
+
+
+for i in range(4):
+    draw_communities(nx_g, ordered_comms[i], color_palette[i])
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
 ax.set_aspect("auto")
 fig.tight_layout()
 add_basemap(ax, crs=crs)
-plt.savefig(os.path.join(out_folder, "biggest_louvain_community.png"))
+plt.savefig(os.path.join(out_folder, "biggest_louvain_communities.png"))
 plt.show()
 
 fig, ax = plt.subplots(figsize=(10, 10))
-for i in range(1, n_comms + 1):
-    bus_stops = [s for s in popular_stops if s in ordered_comms[-i]]
-    nx.draw(
-        nx.subgraph(nx_g, ordered_comms[-i]),
-        pos=coordinates,
-        ax=ax,
-        node_size=10,
-        node_color=color_palette[i],
-        width=0.5,
-        alpha=0.8,
-        arrowsize=5,
-    )
-    nx.draw_networkx_nodes(
-        nx.subgraph(nx_g, bus_stops), {n: c for n, c in coordinates.items() if n in bus_stops}, node_size=20,
-        node_color='yellow'
-    )
+for i in range(4, 9):
+    draw_communities(nx_g, ordered_comms[i], color_palette[i])
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
 ax.axis("off")
 ax.set_aspect("auto")
 fig.tight_layout()
 add_basemap(ax, crs=crs)
-plt.savefig(os.path.join(out_folder, "smallest_louvain_community.png"))
+plt.savefig(os.path.join(out_folder, "medium_louvain_communities.png"))
+plt.show()
+
+fig, ax = plt.subplots(figsize=(10, 10))
+for i in range(9, len(comms)):
+    draw_communities(nx_g, ordered_comms[i], color_palette[i])
+ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
+ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
+ax.axis("off")
+ax.set_aspect("auto")
+fig.tight_layout()
+add_basemap(ax, crs=crs)
+plt.savefig(os.path.join(out_folder, "smallest_louvain_communities.png"))
 plt.show()
 
 modularities = pd.DataFrame(

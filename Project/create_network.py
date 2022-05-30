@@ -71,6 +71,7 @@ print(net.head())
 print(net.columns)
 
 G = nx.from_pandas_edgelist(net, edge_attr=["weight", "lines"], create_using=DiGraph)
+assert nx.number_of_selfloops(G) == 0
 
 attributes = {}
 aux_df = net_data.drop_duplicates(subset='NOM_PARADA').set_index('NOM_PARADA')
