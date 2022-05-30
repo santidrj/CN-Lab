@@ -5,6 +5,7 @@ from itertools import chain
 import geopandas
 import networkx as nx
 from networkx import DiGraph
+
 # TODO: detect automatically lines leading to disconnected components
 from pandas import Series
 

@@ -147,10 +147,7 @@ def draw_communities(G, community: set, color):
     )
     subgraph = nx.subgraph(G, bus_stops)
     stops_pos = {n: c for n, c in coordinates.items() if n in bus_stops}
-    nx.draw_networkx_nodes(
-        subgraph, pos=stops_pos, node_size=20,
-        node_color='yellow'
-    )
+    nx.draw_networkx_nodes(subgraph, pos=stops_pos, node_size=20, node_color='yellow')
     # nx.draw_networkx_labels(subgraph, stops_pos)
 
 

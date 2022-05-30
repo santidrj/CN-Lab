@@ -16,8 +16,7 @@ if seed:
 
 
 def subset_net(net, lines):
-    sub_net = nx.DiGraph(((u, v, e) for u, v, e in net.edges(data=True)
-                          if any(map(lambda l: l in e["lines"], lines))))
+    sub_net = nx.DiGraph(((u, v, e) for u, v, e in net.edges(data=True) if any(map(lambda l: l in e["lines"], lines))))
     return sub_net
 
 
@@ -136,9 +135,11 @@ def shortest_routes(net, lines):
 
 
 def plot_shortest_routes(net, lines, out_folder="", load=False):
-    if load \
-            and os.path.exists(os.path.join(out_folder, "transhipment_dict.pkl")) \
-            and os.path.exists(os.path.join(out_folder, "path_length_dict.pkl")):
+    if (
+        load
+        and os.path.exists(os.path.join(out_folder, "transhipment_dict.pkl"))
+        and os.path.exists(os.path.join(out_folder, "path_length_dict.pkl"))
+    ):
         f = open(os.path.join(out_folder, "transhipment_dict.pkl"), "rb")
         transhipment_dict = pickle.load(f)
         f.close()
@@ -179,11 +180,7 @@ def plot_hists(net, bins=20, out_folder=""):
     node_degrees = [k[-1] for k in nx.degree(net)]
 
     fig = plt.figure()
-    plt.hist(node_degrees,
-             bins=bins,
-             density=True,
-             color="grey",
-             edgecolor="white")
+    plt.hist(node_degrees, bins=bins, density=True, color="grey", edgecolor="white")
     plt.xlabel("k", fontsize=15)
     plt.ylabel("P(k)", fontsize=15)
     plt.xticks(fontsize=12)
@@ -193,12 +190,7 @@ def plot_hists(net, bins=20, out_folder=""):
     plt.show()
 
     fig = plt.figure()
-    plt.hist(node_degrees,
-             bins=bins,
-             cumulative=-1,
-             density=True,
-             color="grey",
-             edgecolor="white")
+    plt.hist(node_degrees, bins=bins, cumulative=-1, density=True, color="grey", edgecolor="white")
     plt.xlabel("k", fontsize=15)
     plt.ylabel("P(k)", fontsize=15)
     plt.xticks(fontsize=12)
@@ -209,16 +201,12 @@ def plot_hists(net, bins=20, out_folder=""):
 
     fig = plt.figure()
     log_k = np.linspace(np.log10(min(node_degrees)), np.log10(max(node_degrees)), bins)
-    n, _, _ = plt.hist(node_degrees,
-                       10 ** log_k,
-                       log=True,
-                       density=True,
-                       label="empirical",
-                       color="grey",
-                       edgecolor="white")
+    n, _, _ = plt.hist(
+        node_degrees, 10**log_k, log=True, density=True, label="empirical", color="grey", edgecolor="white"
+    )
     fit = np.polyfit((log_k[1:] + log_k[:-1]) / 2, n, 1)
     alpha, C = 1 - fit[0], fit[1]
-    plt.plot(10 ** log_k, C * (10 ** log_k) ** (-alpha), "k-")
+    plt.plot(10**log_k, C * (10**log_k) ** (-alpha), "k-")
     plt.xscale("log")
     plt.title("PDF")
     plt.xlabel("k", fontsize=15)
@@ -229,17 +217,19 @@ def plot_hists(net, bins=20, out_folder=""):
     plt.show()
 
     fig = plt.figure()
-    n, _, _ = plt.hist(node_degrees,
-                       10 ** log_k,
-                       cumulative=-1,
-                       log=True,
-                       density=True,
-                       label="empirical",
-                       color="grey",
-                       edgecolor="white")
+    n, _, _ = plt.hist(
+        node_degrees,
+        10**log_k,
+        cumulative=-1,
+        log=True,
+        density=True,
+        label="empirical",
+        color="grey",
+        edgecolor="white",
+    )
     fit = np.polyfit((log_k[1:] + log_k[:-1]) / 2, n, 1)
     alpha, C = 1 - fit[0], fit[1]
-    plt.plot(10 ** log_k, C * (10 ** log_k) ** (-alpha), "k-")
+    plt.plot(10**log_k, C * (10**log_k) ** (-alpha), "k-")
     plt.gca().set_xscale("log")
     plt.title("CCDF")
     plt.xlabel("k", fontsize=15)
