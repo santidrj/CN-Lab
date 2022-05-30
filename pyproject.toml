@@ -18,6 +18,8 @@ rasterio = {path = "Project/geopandas_dependencies/rasterio-1.2.10-cp39-cp39-win
 geopandas = "^0.10.2"
 future = "^0.18.2"
 numpy = "^1.22.4"
+igraph = "^0.9.10"
+contextily = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.3.0", allow-prereleases = true}

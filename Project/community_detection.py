@@ -1,16 +1,16 @@
+import os
+
 import geopandas
 import igraph as ig
 import matplotlib.pyplot as plt
 import networkx as nx
 import networkx.algorithms.community as nx_comm
 import numpy as np
-import os
 import pandas as pd
 import seaborn as sns
 from contextily import add_basemap
 from igraph import Graph
 from networkx import MultiGraph
-from pprint import pprint
 
 
 def nx_com_to_pajek_file(G, comm_list, filepath):
@@ -36,11 +36,39 @@ def ig_com_to_pajek_file(comm_list, filepath):
 data_folder = "data"
 out_folder = "output"
 addition = 0.005
+tables_dir = os.path.join(out_folder, "tables")
+if not os.path.exists(tables_dir):
+    os.makedirs(tables_dir)
 
 g = Graph.Load(os.path.join(data_folder, "bus-bcn.net"), format="pajek")
+nx_g = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
+assert nx.number_of_selfloops(nx_g) == 0
 net_data = geopandas.read_file(os.path.join(data_folder, "raw", "parades_linia.json"))
 crs = net_data.crs.to_string()
 del net_data
+
+# Betweenness
+betweenness = nx.betweenness_centrality(nx_g, normalized=True, weight="weight")
+stops = list(betweenness.keys())
+stop_betweenness = list(betweenness.values())
+top_10 = np.argsort(stop_betweenness)[::-1][:10]
+print("Top-10 betweenness:")
+for i in top_10:
+    print(f"{stops[i]}: {stop_betweenness[i]}")
+
+df_betweenness = pd.DataFrame({"Bus stop": np.array(stops)[top_10], "Betweeness": np.array(stop_betweenness)[top_10]})
+df_betweenness.set_index("Bus stop", inplace=True)
+outfile = os.path.join(tables_dir, "betweenness.tex")
+df_betweenness.style.to_latex(
+    outfile,
+    position="!htbp",
+    position_float="centering",
+    hrules=True,
+    label="tab:betweenness",
+    caption="Top-10 bus stop betweenness.",
+)
+
+# Community detection
 comms = g.community_infomap(edge_weights="weight")
 infomap_modularity = comms.modularity
 infomap_membership = comms.membership
@@ -58,8 +86,6 @@ plt.savefig(os.path.join(out_folder, "infomap_community.png"))
 plt.show()
 print(f"Number of communities detected by Infomap: {len(comms)}")
 
-nx_g = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
-assert nx.number_of_selfloops(nx_g) == 0
 comms = nx_comm.louvain_communities(MultiGraph(nx_g), resolution=0.3, seed=2022)
 louvain_modularity = nx_comm.modularity(nx_g, comms)
 
@@ -77,7 +103,6 @@ for i in range(n_comm):
     nodes.extend(list(comms[i]))
     colors.extend([color_palette[i]] * len(comms[i]))
 
-# popuplar_stops = [x[0] for x in sorted(nx_g.degree(), key=lambda x: -x[1])[:10]]
 fig, ax = plt.subplots(figsize=(10, 10))
 nx.draw_networkx_nodes(
     nx_g,
@@ -152,9 +177,6 @@ modularities = pd.DataFrame(
     {"algorithm": ["Infomap", "Louvain"], "modulairty": [infomap_modularity, louvain_modularity]}
 )
 modularities.set_index("algorithm", inplace=True)
-tables_dir = os.path.join(out_folder, "tables")
-if not os.path.exists(tables_dir):
-    os.makedirs(tables_dir)
 outfile = os.path.join(tables_dir, "modularity.tex")
 s = modularities.style.highlight_max(props="textbf:--rwrap")
 s.to_latex(
@@ -166,23 +188,3 @@ s.to_latex(
     caption="Network modularity using Infomap and Louvain algorithms.",
 )
 
-# Betweenness
-betweenness = nx.betweenness_centrality(nx_g, normalized=True, weight="weight")
-stops = list(betweenness.keys())
-stop_betweenness = list(betweenness.values())
-top_10 = np.argsort(stop_betweenness)[::-1][:10]
-print("Top-10 betweenness:")
-for i in top_10:
-    print(f"{stops[i]}: {stop_betweenness[i]}")
-
-df_betweenness = pd.DataFrame({"Bus stop": np.array(stops)[top_10], "Betweeness": np.array(stop_betweenness)[top_10]})
-df_betweenness.set_index("Bus stop", inplace=True)
-outfile = os.path.join(tables_dir, "betweenness.tex")
-df_betweenness.style.to_latex(
-    outfile,
-    position="!htbp",
-    position_float="centering",
-    hrules=True,
-    label="tab:betweenness",
-    caption="Top-10 bus stop betweenness.",
-)

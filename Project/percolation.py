@@ -117,8 +117,8 @@ ax.fill_between(
 
 ax.set_ylim(ymin=0.0, ymax=1.0)
 ax.set_xlim(xmin=0.0, xmax=1.0)
-# ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=3), fontsize=12)
-# ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=3), fontsize=12)
+ax.set_xticks(np.linspace(np.min(ps), np.max(ps), num=11), fontsize=12)
+ax.set_yticks(np.linspace(0, ax.get_ylim()[1], num=11), fontsize=12)
 ax.set_ylabel(r"size of giant component $S$", fontsize=15)
 ax.set_xlabel(r"occupation probability $\phi$", fontsize=15)
 
