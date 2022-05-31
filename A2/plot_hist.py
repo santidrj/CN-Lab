@@ -1,6 +1,7 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 
 degrees_path = "degrees"
 plots_path = os.path.join("figures", "histograms_r")

@@ -1,9 +1,10 @@
 import os
 import pickle
+from itertools import chain
+
 import networkx as nx
 import pandas as pd
 import small_world as sw
-from itertools import chain
 
 data_folder = 'data'
 out_folder = 'output'

@@ -13,6 +13,12 @@ percolate : The high-level module
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+
+import copy
+
+import networkx as nx
+import numpy as np
+import scipy.stats
 from future.builtins import (
     ascii,
     bytes,
@@ -33,12 +39,6 @@ from future.builtins import (
     super,
     zip,
 )
-
-import copy
-import numpy as np
-import scipy.stats
-import networkx as nx
-
 
 alpha_1sigma = 2 * scipy.stats.norm.cdf(-1.0)
 """

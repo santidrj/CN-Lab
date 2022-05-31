@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
-import numpy as np
 
-import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 from matplotlib.ticker import AutoMinorLocator
 
 OUTPUT_DIR = "output"

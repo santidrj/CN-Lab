@@ -4,7 +4,6 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-
 import percolate
 
 data_folder = "data"
@@ -13,7 +12,6 @@ if not os.path.exists(out_dir):
     os.mkdir(out_dir)
 
 G = nx.read_pajek(os.path.join(data_folder, "bus-bcn.net"))
-G = nx.Graph(G)
 
 x_coord = nx.get_node_attributes(G, "x")
 y_coord = nx.get_node_attributes(G, "y")

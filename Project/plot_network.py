@@ -1,10 +1,11 @@
 import os.path
+
 import geopandas
-import networkx as nx
-from matplotlib import pyplot as plt
 import igraph as ig
-from igraph import Graph
+import networkx as nx
 from contextily import add_basemap
+from igraph import Graph
+from matplotlib import pyplot as plt
 
 data_folder = 'data'
 out_folder = "output"

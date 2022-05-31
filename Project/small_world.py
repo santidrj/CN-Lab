@@ -1,14 +1,14 @@
-import random
-import time
-
-import networkx as nx
-import numpy as np
 import os
 import pickle
+import random
+import time
+from pprint import pprint
+
 import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
 import pandas as pd
 from networkx import NetworkXNoPath
-from pprint import pprint
 
 seed = None
 if seed:
