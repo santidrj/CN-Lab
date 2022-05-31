@@ -5,8 +5,6 @@ from itertools import chain
 import geopandas
 import networkx as nx
 from networkx import DiGraph
-
-# TODO: detect automatically lines leading to disconnected components
 from pandas import Series
 
 data_folder = "data"
@@ -18,11 +16,14 @@ print(net_data.head())
 relevant_columns = ["NOM_PARADA", "ORDRE", "NOM_LINIA", "SENTIT", "geometry"]
 
 net_data = net_data[relevant_columns]
+
+# Remove lines not connected to any other
 net_data.drop_duplicates(inplace=True)
 net_data.drop(net_data[net_data["NOM_LINIA"] == "111"].index, inplace=True)
 net_data.drop(net_data[net_data["NOM_LINIA"] == "128"].index, inplace=True)
 net_data.drop(net_data[net_data["NOM_LINIA"] == "118"].index, inplace=True)
 
+# Create edge list
 net_data_grouped = (
     net_data.groupby(["NOM_LINIA", "SENTIT"], sort=False)
     .apply(lambda g: g.sort_values(by="ORDRE", ascending=True))
@@ -30,6 +31,8 @@ net_data_grouped = (
 )
 net_data_grouped["PROXIMA_PARADA"] = net_data_grouped.groupby(["NOM_LINIA", "SENTIT"])["NOM_PARADA"].shift(-1)
 net_data_grouped.dropna(inplace=True)
+
+# Compute edge weight as number of lines passing
 weights = net_data_grouped.groupby(["NOM_PARADA", "PROXIMA_PARADA"])["NOM_LINIA"].nunique().reset_index(drop=False)
 weights.rename(columns={"NOM_LINIA": "weight"}, inplace=True)
 
@@ -37,6 +40,8 @@ print("\nExample of line with next stop added:")
 print(net_data_grouped.loc[net_data_grouped["NOM_LINIA"] == "D20"])
 
 weighted_net_data = net_data_grouped.merge(weights, on=["NOM_PARADA", "PROXIMA_PARADA"])
+
+# Aggregate lines in a list
 lines_net_data = (
     weighted_net_data.groupby(["NOM_PARADA", "PROXIMA_PARADA"])["NOM_LINIA"].agg(list).reset_index(name="NOM_LINIA")
 )
@@ -50,11 +55,13 @@ net.rename(
     inplace=True,
 )
 net.drop_duplicates(subset=["source", "target"], inplace=True)
-# Remove self-loops
+
+# Remove self-loops and save DataFrame
 net.drop(net[net["source"] == net["target"]].index, inplace=True)
 net[["source", "target", "lines"]].to_pickle(os.path.join(data_folder, "bus-bcn-lines.pkl"))
 net.to_pickle(os.path.join(data_folder, "bus-bcn.pkl"))
 
+# Save line connections to a pickle
 line_names = list(set(chain(*net["lines"].tolist())))
 connections = dict.fromkeys(line_names, [])
 for stop in net_data_grouped["NOM_PARADA"].unique().tolist():
@@ -71,6 +78,7 @@ print("\nExample of data with weights and list of lines added:")
 print(net.head())
 print(net.columns)
 
+# Create network and save in Pajek format
 G = nx.from_pandas_edgelist(net, edge_attr=["weight", "lines"], create_using=DiGraph)
 assert nx.number_of_selfloops(G) == 0
 

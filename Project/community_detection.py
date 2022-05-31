@@ -113,9 +113,6 @@ nx.draw_networkx_nodes(
     ax=ax,
     node_size=10,
     node_color=colors,
-    # width=0.8,
-    # arrowsize=8,
-    # alpha=0.5,
 )
 ax.set_xlim(min(g.vs["x"]) - addition, max(g.vs["x"]) + addition)
 ax.set_ylim(min(g.vs["y"]) - addition, max(g.vs["y"]) + addition)
@@ -148,7 +145,6 @@ def draw_communities(G, community: set, color):
     subgraph = nx.subgraph(G, bus_stops)
     stops_pos = {n: c for n, c in coordinates.items() if n in bus_stops}
     nx.draw_networkx_nodes(subgraph, pos=stops_pos, node_size=20, node_color='yellow')
-    # nx.draw_networkx_labels(subgraph, stops_pos)
 
 
 for i in range(4):
