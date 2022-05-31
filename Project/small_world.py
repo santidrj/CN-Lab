@@ -1,8 +1,6 @@
 import os
 import pickle
 import random
-import time
-from pprint import pprint
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -40,32 +38,23 @@ def generate_subnets(net, connections, n_subnets, n_reps, min_lines=10, max_line
     mean_diameter = []
     mean_N = []
     for j in range(n_reps):
-        print(f"Subset of sub-nets #{j}")
         diameter = []
         N = []
         step = (max_lines - min_lines) // n_subnets
         n_lines = min_lines
-        # i = 0
         for i in range(n_subnets):
-            # i += 1
-            # print(i)
             while True:
-                print(f"Computing subset of {n_lines} lines...")
                 lines = subset_lines(connections, n_lines)
-                # print("Computing subnet...")
                 sub_net = subset_net(net, lines)
                 if seed or nx.number_weakly_connected_components(sub_net) == 1:
                     break
-            # print("Computing mean path...")
             diameter.append(nx.diameter(sub_net.to_undirected()))
             N.append(sub_net.number_of_nodes())
             n_lines += step
         mean_diameter.append(diameter)
         mean_N.append(N)
-    # print("Done with subnets.")
     mean_diameter = np.mean(mean_diameter, axis=0)
     mean_N = np.mean(mean_N, axis=0)
-    # print("Computing mean path of the whole network...")
     np.append(mean_diameter, nx.average_shortest_path_length(net))
     np.append(mean_N, net.number_of_nodes())
     return mean_N, mean_diameter
@@ -101,10 +90,7 @@ def shortest_routes(net, lines):
     # paths = dict(nx.all_pairs_dijkstra_path(G, weight="weight"))
     transhipment_dict = {}
     path_length_dict = {}
-    # i = 0
     for source in net.nodes:
-        # i += 1
-        # print(f"Node {i}/{len(net.nodes)}")
         for target in net.nodes:
             if target == source:
                 continue
@@ -121,16 +107,12 @@ def shortest_routes(net, lines):
                         current_stop = next_stop
                     transhipment_dict[(source, target)] = transhipment_dict.get((source, target), [])
                     (transhipment_dict[(source, target)]).append(transhipments_count)
-                    # print(f"Shortest path: {len(path)}")
-                    # print(f"Number of transhipments: {transhipments_count}")
                 try:
                     path_length_dict[(source, target)] = len(path)
                 except NameError:
                     path_length_dict[(source, target)] = np.inf
-                # print(transhipment_dict[(source, target)])
             except NetworkXNoPath as e:
                 print(e)
-    # pprint(transhipment_dict)
     return transhipment_dict, path_length_dict
 
 
